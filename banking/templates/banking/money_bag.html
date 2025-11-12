@@ -1,0 +1,200 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>💰 Pluie d’argent – Version Réaliste</title>
+<style>
+  body {
+    margin: 0;
+    background: linear-gradient(180deg, #e0f7fa, #ffffff);
+    overflow: hidden;
+    height: 100vh;
+    font-family: "Poppins", sans-serif;
+  }
+
+  #scoreboard {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 26px;
+    font-weight: bold;
+    color: #333;
+    z-index: 10;
+  }
+
+  #level {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 20px;
+    color: #555;
+    z-index: 10;
+  }
+
+  #gameArea {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  #bag {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 120px;
+    background: url("https://cdn-icons-png.flaticon.com/512/2521/2521778.png") no-repeat center / contain;
+  }
+
+  .coin {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .green {
+    background-image: url("https://cdn-icons-png.flaticon.com/512/2769/2769453.png"); /* billet vert */
+  }
+
+  .red {
+    background-image: url("https://cdn-icons-png.flaticon.com/512/3098/3098980.png"); /* billet rouge */
+  }
+</style>
+</head>
+<body>
+
+<div id="scoreboard">Solde : <span id="score">0</span> €</div>
+<div id="level">Niveau : <span id="levelNum">1</span></div>
+
+<div id="gameArea">
+  <div id="bag"></div>
+</div>
+
+<script>
+  const bag = document.getElementById("bag");
+  const gameArea = document.getElementById("gameArea");
+  const scoreDisplay = document.getElementById("score");
+  const levelDisplay = document.getElementById("levelNum");
+
+  let score = 0;
+  let level = 1;
+  let coinsPerLevel = 15;
+  let fallingSpeed = 5; // vitesse initiale augmentée
+  let activeCoins = [];
+
+  // Déplacement du panier avec la souris
+  let bagX = window.innerWidth / 2 - 60;
+  document.addEventListener("mousemove", (e) => {
+    bagX = e.clientX - 60;
+    bag.style.left = bagX + "px";
+  });
+
+  // Génère une pièce (billet vert ou rouge)
+  function createCoin() {
+    const coin = document.createElement("div");
+    const isGreen = Math.random() < 0.6; // 60% de chances vert
+    coin.classList.add("coin", isGreen ? "green" : "red");
+    coin.style.left = Math.random() * (window.innerWidth - 50) + "px";
+    coin.style.top = "-60px";
+    coin.value = isGreen ? 10 : -10;
+    gameArea.appendChild(coin);
+    activeCoins.push(coin);
+  }
+
+  // Fait tomber les billets
+  function updateCoins() {
+    activeCoins.forEach((coin, index) => {
+      let top = parseFloat(coin.style.top);
+      top += fallingSpeed;
+      coin.style.top = top + "px";
+
+      const coinRect = coin.getBoundingClientRect();
+      const bagRect = bag.getBoundingClientRect();
+
+      // Collision panier/billet
+      if (
+        coinRect.bottom >= bagRect.top &&
+        coinRect.top <= bagRect.bottom &&
+        coinRect.left >= bagRect.left &&
+        coinRect.right <= bagRect.right
+      ) {
+        score += coin.value;
+        scoreDisplay.textContent = score;
+        gameArea.removeChild(coin);
+        activeCoins.splice(index, 1);
+      }
+
+      // Supprime si tombe hors écran
+      if (top > window.innerHeight) {
+        gameArea.removeChild(coin);
+        activeCoins.splice(index, 1);
+      }
+    });
+  }
+
+  // Passe au niveau suivant
+  function nextLevel() {
+    level++;
+    if (level > 10) {
+      alert("🎉 Félicitations ! Tu as fini les 10 niveaux avec " + score + " € !");
+      resetGame();
+      return;
+    }
+    levelDisplay.textContent = level;
+
+    // Difficulté accrue : triple la vitesse dès le niveau 3
+    if (level >= 3) {
+      fallingSpeed *= 3;
+    } else {
+      fallingSpeed += 1.5;
+    }
+
+    coinsPerLevel += 10;
+    startLevel();
+  }
+
+  // Démarre un niveau
+  function startLevel() {
+    let coinsCreated = 0;
+    const interval = setInterval(() => {
+      createCoin();
+      coinsCreated++;
+      if (coinsCreated >= coinsPerLevel) {
+        clearInterval(interval);
+        setTimeout(nextLevel, 2500); // transition plus rapide
+      }
+    }, 600 - level * 50);
+  }
+
+  // Boucle du jeu
+  function gameLoop() {
+    updateCoins();
+    requestAnimationFrame(gameLoop);
+  }
+
+  // Réinitialise le jeu
+  function resetGame() {
+    score = 0;
+    level = 1;
+    coinsPerLevel = 15;
+    fallingSpeed = 5;
+    scoreDisplay.textContent = score;
+    levelDisplay.textContent = level;
+    activeCoins.forEach(c => gameArea.removeChild(c));
+    activeCoins = [];
+    startLevel();
+  }
+
+  // Lancement
+  startLevel();
+  gameLoop();
+</script>
+
+</body>
+</html>

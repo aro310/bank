@@ -16,7 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from banking import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('money-bag/', views.money_bag, name='money_bag'),
+    path('acceuil/', views.acceuil, name='acceuil'),
+    path('dash-client/', views.dash_client, name='dash_client'),
+    path('login-admin/', views.login_admin, name='login_admin'),
+    path('login-client/', views.login_client, name='login_client'),
 ]

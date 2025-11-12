@@ -1,0 +1,216 @@
+/* Couleurs NovaBank : #ECF8F6 | #18534F | #226D68 */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: #ECF8F6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    width: 900px;
+    height: 550px;
+    display: flex;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 1s ease forwards;
+}
+
+/* --- Section gauche --- */
+.left-section {
+    flex: 1;
+    background: linear-gradient(135deg, #18534F, #226D68);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.illustration {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin-bottom: 20px;
+}
+
+.circle {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    animation: rotate 12s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.stars::before {
+    position: absolute;
+    top: 35%;
+    left: 30%;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 18px;
+    animation: twinkle 2s infinite ease-in-out;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+.bank-name {
+    font-size: 2em;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.slogan {
+    font-size: 1em;
+    opacity: 0.9;
+}
+
+/* --- Section droite (Formulaire) --- */
+.right-section {
+    flex: 1.2;
+    background: #ECF8F6;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+}
+
+.right-section h2 {
+    font-size: 1.8em;
+    color: #18534F;
+    margin-bottom: 10px;
+}
+
+.right-section p {
+    color: #18534F;
+    opacity: 0.8;
+    margin-bottom: 30px;
+}
+
+form {
+    width: 100%;
+    max-width: 330px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+label {
+    margin-bottom: 5px;
+    color: #18534F;
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+input {
+    padding: 10px;
+    border: 1.5px solid #226D68;
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.3s ease;
+    background: #fff;
+}
+
+input:focus {
+    border-color: #18534F;
+    box-shadow: 0 0 8px rgba(24, 83, 79, 0.2);
+}
+
+/* --- Bouton de connexion --- */
+.btn {
+    width: 100%;
+    padding: 12px;
+    background: #226D68;
+    border: none;
+    color: white;
+    font-weight: 600;
+    font-size: 1em;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    background: #18534F;
+}
+
+/* --- Lien mot de passe oublié --- */
+.forgot {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.forgot a {
+    text-decoration: none;
+    color: #226D68;
+    font-size: 0.9em;
+    transition: color 0.3s ease;
+}
+
+.forgot a:hover {
+    color: #18534F;
+}
+
+/* --- Flèche de retour --- */
+.back-arrow {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 16px;
+    color: #226D68;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.back-arrow:hover {
+    color: #18534F;
+    transform: translateX(-5px);
+}
+
+/* --- Animations de fade --- */
+.fade-slide {
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeSlide 1s ease forwards;
+}
+
+.fade-slide.delay1 { animation-delay: 0.3s; }
+.fade-slide.delay2 { animation-delay: 0.6s; }
+
+@keyframes fadeSlide {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}

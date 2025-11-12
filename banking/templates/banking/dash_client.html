@@ -1,0 +1,176 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NovaBank - Client</title>
+<link rel="stylesheet" href="{% static 'banking/dash_client.css' %}">
+
+</head>
+<body>
+<header>
+    <div class="header-text">
+        <h2>NovaBank - Client</h2>
+        <h3>Bienvenue dans l'espace Client</h3>
+    </div>
+    <div class="header-right">
+        <div class="header-logo"></div>
+        <div class="client-balance">
+            Solde: 300 000 MGA
+        </div>
+    </div>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="{% url 'acceuil' %}">Accueil</a></li>
+        <li id="operations-link"><a>Opérations <span class="nav-arrow">▼</span></a></li>
+        <li id="history-link"><a>Historique des opérations <span class="nav-arrow">▼</span></a></li>
+        <li>Nom</li>
+        <li>
+            <a href="{% url 'login_client' %}" class="btn-logout">
+                Quitter
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M12 4l1.41 1.41L8.83 10H20v2H8.83l4.58 4.59L12 18l-8-8z"/>
+                </svg>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<!-- Dropdown Opérations -->
+<div class="dropdown-section" id="operationsDropdown">
+    <ul>
+        <li id="deposit">Dépôts</li>
+        <li id="withdrawal">Retraits</li>
+    </ul>
+
+    <!-- Formulaire Dépôt -->
+    <div class="operation-form" id="depositForm">
+        <h4>Dépôt</h4>
+        <input type="text" placeholder="Numéro de compte" required>
+        <input type="number" placeholder="Montant (MGA)" min="0" step="0.01" required>
+        <input type="text" placeholder="Description (facultatif)">
+        <button type="submit">Valider</button>
+    </div>
+
+    <!-- Formulaire Retrait -->
+    <div class="operation-form" id="withdrawalForm">
+        <h4>Retrait</h4>
+        <input type="text" placeholder="Numéro de compte" required>
+        <input type="number" placeholder="Montant (MGA)" min="0" step="0.01" required>
+        <input type="text" placeholder="Description (facultatif)">
+        <button type="submit">Valider</button>
+    </div>
+</div>
+
+<!-- Dropdown Historique -->
+<div class="dropdown-section" id="historyDropdown">
+    <div id="historyContainer">
+        <input type="text" id="historyAccount" placeholder="Numéro de compte">
+        <button id="loadHistory">Afficher l’historique</button>
+        <table id="historyTable">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Montant (MGA)</th>
+                    <th>Solde (MGA)</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<script>
+let operationsLink = document.getElementById('operations-link');
+let historyLink = document.getElementById('history-link');
+let operationsDropdown = document.getElementById('operationsDropdown');
+let historyDropdown = document.getElementById('historyDropdown');
+let depositItem = document.getElementById('deposit');
+let withdrawalItem = document.getElementById('withdrawal');
+let depositForm = document.getElementById('depositForm');
+let withdrawalForm = document.getElementById('withdrawalForm');
+let historyContainer = document.getElementById('historyContainer');
+let clientBalance = document.querySelector('.client-balance');
+
+// Valeur initiale du solde
+let solde = 300000;
+
+// Fonction pour afficher le solde
+function updateBalance() {
+    clientBalance.textContent = `Solde: ${solde.toFixed(2)} MGA`;
+}
+
+// Toggle dropdowns
+operationsLink.addEventListener('click', () => {
+    operationsDropdown.classList.toggle('active');
+    operationsLink.classList.toggle('open');
+    historyDropdown.classList.remove('active');
+    historyLink.classList.remove('open');
+    depositForm.classList.remove('show');
+    withdrawalForm.classList.remove('show');
+    historyContainer.classList.remove('show');
+});
+
+historyLink.addEventListener('click', () => {
+    historyDropdown.classList.toggle('active');
+    historyLink.classList.toggle('open');
+    operationsDropdown.classList.remove('active');
+    operationsLink.classList.remove('open');
+    depositForm.classList.remove('show');
+    withdrawalForm.classList.remove('show');
+    historyContainer.classList.add('show');
+});
+
+// Afficher le formulaire correspondant
+depositItem.addEventListener('click', () => {
+    depositForm.classList.add('show');
+    withdrawalForm.classList.remove('show');
+});
+
+withdrawalItem.addEventListener('click', () => {
+    withdrawalForm.classList.add('show');
+    depositForm.classList.remove('show');
+});
+
+// Gestion dépôt
+depositForm.querySelector('button').addEventListener('click', (e) => {
+    e.preventDefault();
+    let amount = parseFloat(depositForm.querySelector('input[type="number"]').value);
+    if(!isNaN(amount) && amount > 0){
+        solde += amount;
+        updateBalance();
+        alert(`Dépôt de ${amount.toFixed(2)} MGA effectué !`);
+        depositForm.reset();
+    } else {
+        alert('Montant invalide pour le dépôt.');
+    }
+});
+
+// Gestion retrait
+withdrawalForm.querySelector('button').addEventListener('click', (e) => {
+    e.preventDefault();
+    let amount = parseFloat(withdrawalForm.querySelector('input[type="number"]').value);
+    if(!isNaN(amount) && amount > 0){
+        if(amount <= solde){
+            solde -= amount;
+            updateBalance();
+            alert(`Retrait de ${amount.toFixed(2)} MGA effectué !`);
+            withdrawalForm.reset();
+        } else {
+            alert('Solde insuffisant.');
+        }
+    } else {
+        alert('Montant invalide pour le retrait.');
+    }
+});
+
+// Initialisation
+updateBalance();
+</script>
+</body>
+</html>

@@ -9,12 +9,15 @@ class Client(models.Model):
     date_de_naissance = models.DateField()
     
     adresse = models.TextField(blank=True, null=True)
+
+    #mila asina mdp
     
     email = models.EmailField(unique=True, help_text="Email du client")
     telephone = models.CharField(max_length=20, blank=True, null=True)
 
     def __str__(self):
         return f"{self.prenom} {self.nom}"
+
 
     class Meta:
         verbose_name = "Client"

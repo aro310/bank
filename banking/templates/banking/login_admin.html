@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovaBank - Espace Administrateur</title>
+    <link rel="stylesheet" href="{% static 'banking/login_admin.css' %}">
+</head>
+<body>
+    <div class="container">
+        <!-- Section gauche avec visuel et logo -->
+        <div class="left-section">
+            <div class="illustration">
+                <div class="circle"></div>
+                <div class="stars"></div>
+            </div>
+            <h1 class="bank-name">NovaBank</h1>
+            <p class="slogan">Sécurisez et gérez avec confiance</p>
+        </div>
+
+        <!-- Section droite : Formulaire admin -->
+        <div class="right-section">
+            <h2 class="fade-slide">Espace Administrateur</h2>
+            <p class="fade-slide delay1">Connectez-vous pour accéder au tableau de bord</p>
+
+            <form action="#" method="post" class="fade-slide delay2">
+                <div class="input-group">
+                    <label for="username">Nom d’utilisateur</label>
+                    <input type="text" id="username" name="username" placeholder="admin123" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" placeholder="********" required>
+                </div>
+
+                <button type="submit" class="btn">Se connecter</button>
+                <p class="forgot"><a href="#">Mot de passe oublié ?</a></p>
+
+                <!-- Flèche de retour -->
+                <a href="{% url 'acceuil' %}" class="back-arrow">← Retour à l'accueil</a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

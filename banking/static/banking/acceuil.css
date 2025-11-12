@@ -1,0 +1,186 @@
+/* --- Palette couleurs NovaBank --- */
+/* #ECF8F6 (fond clair) | #18534F (vert foncé) | #226D68 (vert moyen) */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: #ECF8F6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* --- Conteneur principal --- */
+.container {
+    width: 900px;
+    height: 500px;
+    display: flex;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    animation: fadeIn 1s ease forwards;
+}
+
+/* --- Section gauche --- */
+.left-section {
+    flex: 1;
+    background: linear-gradient(135deg, #18534F, #226D68);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* --- Illustration décorative --- */
+.illustration {
+    position: relative;
+    width: 250px;
+    height: 250px;
+    margin-bottom: 20px;
+}
+
+.circle {
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    animation: rotate 10s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.stars::before {
+    position: absolute;
+    color: rgba(255, 255, 255, 0.7);
+    top: 40%;
+    left: 20%;
+    font-size: 20px;
+    animation: twinkle 2s infinite ease-in-out;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+/* --- Texte NovaBank --- */
+.bank-name {
+    font-size: 2em;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    animation: fadeUp 1s ease-out;
+}
+
+.slogan {
+    font-size: 1em;
+    opacity: 0.9;
+    animation: fadeUp 1.5s ease-out;
+}
+
+/* --- Section droite --- */
+.right-section {
+    flex: 1;
+    background: #ECF8F6;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    text-align: center;
+}
+
+/* --- Titres et texte --- */
+.right-section h2 {
+    font-size: 1.8em;
+    color: #18534F;
+    margin-bottom: 10px;
+}
+
+.right-section span {
+    color: #226D68;
+    font-weight: 600;
+}
+
+.right-section p {
+    color: #18534F;
+    margin-bottom: 40px;
+    opacity: 0.8;
+}
+
+/* --- Boutons --- */
+.buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 70%;
+}
+
+.btn {
+    text-decoration: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.client {
+    background: #226D68;
+    color: #fff;
+}
+
+.admin {
+    background: transparent;
+    border: 2px solid #226D68;
+    color: #226D68;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* --- Animations de fade et slide --- */
+.fade-slide {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeSlide 1s ease forwards;
+}
+
+.fade-slide.delay1 { animation-delay: 0.3s; }
+.fade-slide.delay2 { animation-delay: 0.6s; }
+
+@keyframes fadeSlide {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Effet d’apparition du conteneur --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* --- Animation légère du texte NovaBank --- */
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,184 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #ECF8F6;
+    color: #18534F;
+}
+
+/* ===== Header ===== */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background-color: #18534F;
+    color: #ECF8F6;
+}
+
+.header-text { display: flex; flex-direction: column; }
+.header-text h2, .header-text h3 { margin: 0; }
+
+.header-right {
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+.header-logo {
+    width: 80px; height: 80px;
+    background-color: #226D68;
+    border-radius: 10px;
+}
+
+.client-balance {
+    background-color:#226D68;
+    color:#ECF8F6;
+    padding:10px 15px;
+    border-radius:8px;
+    font-weight:600;
+}
+
+/* ===== Nav ===== */
+nav {
+    background-color: #226D68;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    margin: 0;
+    padding: 15px 0;
+    gap: 20px;
+    align-items: center;
+}
+
+nav ul li {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #ECF8F6;
+    position: relative;
+}
+
+nav ul li a {
+    color: #ECF8F6;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+nav ul li a:hover { background-color: #18534F; }
+
+/* ===== Flèches avec animation ===== */
+.nav-arrow {
+    display: inline-block;
+    margin-left: 5px;
+    font-size: 0.9rem;
+    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+nav ul li.open .nav-arrow { transform: rotate(180deg); }
+
+/* ===== Dropdown sections ===== */
+.dropdown-section {
+    max-height: 0;
+    overflow: hidden;
+    background-color: #ECF8F6;
+    border-top: 2px solid #226D68;
+    padding: 0 20px;
+    transition: max-height 0.5s ease, padding 0.5s ease;
+}
+
+.dropdown-section.active { max-height: 600px; padding: 20px; }
+
+/* ===== Liste items ===== */
+.dropdown-section ul { list-style: none; padding: 0; margin: 0; }
+.dropdown-section ul li {
+    padding: 10px 0;
+    font-weight: 600;
+    color: #18534F;
+    border-bottom: 1px solid #d5ebe8;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+.dropdown-section ul li:hover { color: #226D68; }
+
+/* ===== Animation formulaires ===== */
+.operation-form, #historyContainer {
+    opacity: 0;
+    transform: translateY(-15px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.operation-form.show, #historyContainer.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ===== Formulaires ===== */
+.operation-form input, #historyContainer input {
+    padding: 8px 12px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1.5px solid #226D68;
+}
+.operation-form button, #historyContainer button {
+    background-color: #226D68;
+    color: #ECF8F6;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+.operation-form button:hover, #historyContainer button:hover {
+    background-color: #18534F;
+}
+
+#historyTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+#historyTable th, #historyTable td {
+    border: 1px solid #226D68;
+    padding: 8px;
+    text-align: center;
+}
+#historyTable th {
+    background-color: #18534F;
+    color: #ECF8F6;
+}
+
+/* ===== Bouton QUITTER ===== */
+.btn-logout {
+    display: inline-flex;
+    align-items: center;
+    background-color: #18534F;
+    color: #ECF8F6;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+.btn-logout:hover {
+    background-color: #ECF8F6;
+    color: #18534F;
+    border: 1px solid #18534F;
+}
+.btn-logout svg {
+    margin-left: 5px;
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+    transition: transform 0.3s ease;
+}
+.btn-logout:hover svg { transform: translateX(3px); }
