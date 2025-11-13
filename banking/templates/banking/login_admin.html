@@ -1,23 +1,9 @@
+{% extends 'banking/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NovaBank - Espace Administrateur</title>
-    <link rel="stylesheet" href="{% static 'banking/login_admin.css' %}">
-</head>
-<body>
-    <div class="container">
-        <!-- Section gauche -->
-        <div class="left-section">
-            <div class="illustration">
-                <div class="circle"></div>
-                <div class="stars"></div>
-            </div>
-            <h1 class="bank-name">NovaBank</h1>
-            <p class="slogan">Sécurisez et gérez avec confiance</p>
-        </div>
+{% block title %}Login-Administrateur{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'banking/login_admin.css' %}">{% endblock %}
+
+{% block right %}
 
         <!-- Section droite -->
         <div class="right-section">
@@ -52,6 +38,4 @@
                 <a href="{% url 'acceuil' %}" class="back-arrow">Retour à l'accueil</a>
             </form>
         </div>
-    </div>
-</body>
-</html>
+{% endblock %} 

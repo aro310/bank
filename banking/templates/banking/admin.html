@@ -6,28 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NovaBank - Admin</title>
     <link rel="stylesheet" href="{% static 'banking/admin.css' %}">
-    <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; margin: 0; padding: 0; }
-        .container { max-width: 1200px; margin: 20px auto; padding: 20px; }
-        header { background: #1a3d7c; color: white; padding: 20px; text-align: center; border-radius: 10px; }
-        .section { background: white; margin: 20px 0; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h2 { color: #1a3d7c; border-bottom: 2px solid #1a3d7c; padding-bottom: 10px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background: #f0f3f7; }
-        .btn { padding: 8px 16px; margin: 0 5px; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9em; }
-        .btn-validate { background: #28a745; color: white; }
-        .btn-refuse { background: #dc3545; color: white; }
-        .btn-create { background: #007bff; color: white; }
-        .form-group { margin: 15px 0; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
-        .message { padding: 10px; margin: 10px 0; border-radius: 5px; }
-        .success { background: #d4edda; color: #155724; }
-        .error { background: #f8d7da; color: #721c24; }
-        .actions { display: flex; gap: 5px; }
-        .no-data { text-align: center; color: #666; padding: 20px; }
-    </style>
 </head>
 <body>
     <div class="container">
@@ -37,14 +15,12 @@
             <a href="{% url 'logout' %}" style="color: #fff; text-decoration: underline;">Déconnexion</a></p>
         </header>
 
-        <!-- Messages -->
         {% if messages %}
             {% for message in messages %}
                 <div class="message {{ message.tags }}">{{ message }}</div>
             {% endfor %}
         {% endif %}
 
-        <!-- Création d'un nouveau client -->
         <div class="section">
             <h2>Créer un Nouveau Client</h2>
             <form method="post">
@@ -77,8 +53,55 @@
                 <button type="submit" class="btn btn-create">Créer le client + compte</button>
             </form>
         </div>
-
-        <!-- Opérations en attente -->
+        
+        <div class="section">
+            <h2>Liste et Gestion des Clients</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom Complet</th>
+                        <th>Email</th>
+                        <th>Téléphone</th>
+                        <th>Compte Bancaire</th>
+                        <th>Solde</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cli in clients %}
+                    <tr>
+                        <td>{{ cli.id }}</td>
+                        <td>{{ cli.prenom }} {{ cli.nom }}</td>
+                        <td>{{ cli.email }}</td>
+                        <td>{{ cli.telephone|default:"N/A" }}</td>
+                        <td>
+                            {% with compte=cli.comptes.first %}
+                                {{ compte.num_compte|default:"N/A" }}
+                            {% endwith %}
+                        </td>
+                        <td class="client-solde">
+                            {% with compte=cli.comptes.first %}
+                                {{ compte.solde|default:"0.00" }} MGA
+                            {% endwith %}
+                        </td>
+                        <td class="actions">
+                            <a href="{% url 'edit_client' cli.id %}" class="btn btn-edit">Modifier</a> 
+                            <form method="post" action="{% url 'delete_client' cli.id %}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce client et son compte ?');" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete_client">
+                                <button type="submit" class="btn btn-delete">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="no-data">Aucun client enregistré.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
         <div class="section">
             <h2>Opérations en Attente de Validation</h2>
             <form method="post">
@@ -128,7 +151,6 @@
             </form>
         </div>
 
-        <!-- Historique récent -->
         <div class="section">
             <h2>10 Dernières Opérations Validées</h2>
             <table>

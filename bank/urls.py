@@ -13,4 +13,6 @@ urlpatterns = [
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('depot/', views.depot_view, name='depot'),  # Ajouté
     path('retrait/', views.retrait_view, name='retrait'),  # Ajouté
+    path('admin/client/edit/<int:client_id>/', views.edit_client, name='edit_client'),
+    path('admin/client/delete/<int:client_id>/', views.delete_client, name='delete_client'),
 ]

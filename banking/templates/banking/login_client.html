@@ -1,25 +1,11 @@
+{% extends 'banking/base.html' %}
+
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NovaBank - Espace Client</title>
-    <link rel="stylesheet" href="{% static 'banking/login_client.css' %}">
-</head>
-<body>
-    <div class="container">
-        <!-- Partie gauche avec visuel et slogan -->
-        <div class="left-section">
-            <div class="illustration">
-                <div class="circle"></div>
-                <div class="stars"></div>
-            </div>
-            <h1 class="bank-name">NovaBank</h1>
-            <p class="slogan">Votre sécurité, notre priorité</p>
-        </div>
+{% block title %}Login-client{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'banking/login_client.css' %}">{% endblock %}
 
+{% block right %}
         <!-- Partie droite : Formulaire -->
         <div class="right-section">
             <h2 class="fade-slide">Connexion Client</h2>
@@ -74,8 +60,8 @@
                 </div>
             </form>
         </div>
-    </div>
-
+        {% endblock %}
+    {% block extra_js %}
     <script>
         // Nettoie et formate le numéro de compte en majuscules
         const accountInput = document.getElementById('account');
@@ -86,5 +72,4 @@
             e.target.value = value;
         });
     </script>
-</body>
-</html>
+    {% endblock %} 

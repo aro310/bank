@@ -17,6 +17,8 @@ from decimal import Decimal
 from .models import Client, CompteBancaire, Operation
 from django.http import JsonResponse, Http404
 
+
+
 # === LOGIN ADMIN ===
 def login_admin(request):
     if request.method == 'POST':
@@ -36,6 +38,33 @@ def login_admin(request):
 
     return render(request, 'banking/login_admin.html')
 
+@staff_member_required(login_url='login_admin')
+def edit_client(request, client_id):
+    """Vue pour modifier un client."""
+    # TODO: Implémenter la logique de modification du client (via formulaire)
+    client = get_object_or_404(Client, id=client_id)
+    messages.info(request, f"Page de modification pour {client.prenom} {client.nom} (ID: {client_id}).")
+    return redirect('admin_dashboard') # Rediriger temporairement vers le dashboard
+
+@staff_member_required(login_url='login_admin')
+@transaction.atomic
+def delete_client(request, client_id):
+    """Vue pour supprimer un client et son compte."""
+    if request.method == 'POST':
+        client = get_object_or_404(Client, id=client_id)
+        user_id = client.user.id # Récupérer l'ID de l'utilisateur associé
+
+        # Suppression du client et des comptes (via la cascade de modèles)
+        client_name = f"{client.prenom} {client.nom}"
+        client.delete()
+        
+        # Supprimer l'utilisateur Django
+        User.objects.filter(id=user_id).delete()
+        
+        messages.success(request, f"Client {client_name} (ID: {client_id}) et son compte ont été supprimés.")
+    
+    return redirect('admin_dashboard')
+
 # === DASHBOARD ADMIN ===
 @staff_member_required(login_url='login_admin')
 def admin_dashboard(request):
@@ -43,6 +72,7 @@ def admin_dashboard(request):
         action = request.POST.get('action')
 
         # --- Créer un client ---
+        # ... (Logique existante pour 'create_client')
         if action == 'create_client':
             try:
                 with transaction.atomic():
@@ -77,34 +107,42 @@ def admin_dashboard(request):
                     messages.success(request, f"Client {prenom} {nom} créé ! Compte: {compte.num_compte}")
             except Exception as e:
                 messages.error(request, f"Erreur : {e}")
-
+        
         # --- Actions sur opérations ---
+        # ... (Logique existante pour 'bulk_action', 'validate_ID', 'refuse_ID')
         elif action == 'bulk_action':
-            op_ids = request.POST.getlist('op_ids')
-            ops = Operation.objects.filter(id__in=op_ids, statut='ATT')
+             # ... (code existant)
+             op_ids = request.POST.getlist('op_ids')
+             ops = Operation.objects.filter(id__in=op_ids, statut='ATT')
 
-            if 'bulk_validate' in request.POST:
-                _validate_operations(ops, request)
-            elif 'bulk_refuse' in request.POST:
-                _refuse_operations(ops, request)
-
-            for key in request.POST:
-                if key.startswith('validate_'):
-                    op_id = key.split('_')[1]
-                    op = get_object_or_404(Operation, id=op_id, statut='ATT')
-                    _validate_operations([op], request)
-                elif key.startswith('refuse_'):
-                    op_id = key.split('_')[1]
-                    op = get_object_or_404(Operation, id=op_id, statut='ATT')
-                    _refuse_operations([op], request)
+             if 'bulk_validate' in request.POST:
+                 _validate_operations(ops, request)
+             elif 'bulk_refuse' in request.POST:
+                 _refuse_operations(ops, request)
+        
+        # Logique pour les actions individuelles
+        for key in request.POST:
+            if key.startswith('validate_'):
+                op_id = key.split('_')[1]
+                op = get_object_or_404(Operation, id=op_id, statut='ATT')
+                _validate_operations([op], request)
+            elif key.startswith('refuse_'):
+                op_id = key.split('_')[1]
+                op = get_object_or_404(Operation, id=op_id, statut='ATT')
+                _refuse_operations([op], request)
 
     # Données
     pending_ops = Operation.objects.filter(statut='ATT').select_related('compte', 'compte__client').order_by('-date_heure')
     recent_ops = Operation.objects.filter(statut='VAL').select_related('compte', 'compte__client').order_by('-date_validation')[:10]
+    
+    # --- AJOUTER LA LISTE DES CLIENTS ---
+    clients_list = Client.objects.all().select_related('user').prefetch_related('comptes')
+
 
     return render(request, 'banking/admin.html', {
         'pending_operations': pending_ops,
         'recent_operations': recent_ops,
+        'clients': clients_list,  # NOUVEAU CONTEXTE
     })
 
 # Fonctions utilitaires

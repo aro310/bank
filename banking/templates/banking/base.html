@@ -1,0 +1,135 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}{% endblock %}</title>
+        <link rel="stylesheet" href="{% static 'banking/acceuil.css' %}">
+        
+        <script src="https://cdn.jsdelivr.net/npm/three@0.181.1/examples/js/three.min.js"></script>
+        
+        <script src="https://cdn.jsdelivr.net/npm/three@0.181.1/examples/js/loaders/FontLoader.js"></script>
+        {% block extra_css %}{% endblock %}
+
+    </head>
+<body>
+
+    <div class="money-background">
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+        <div class="bill"></div>
+    </div>
+    
+    <div class="cursor"></div>
+
+    <div class="container">
+        <div class="left-section">
+            <div class="illustration">
+                <div class="circle">
+                    <img src="{% static 'banking/images/logo.jpg' %}" alt="Logo NovaBank" class="circle-logo">
+                </div>                <div class="stars"></div>
+                <div class="mountains"></div>
+            </div>
+            <h1 class="bank-name">NovaBank</h1>
+            <p class="slogan">L'avenir de vos finances commence ici</p>
+        </div>
+        {% block right %}{% endblock %}
+    </div>   
+
+    <script>
+        // Initialisation de la scène Three.js
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+        const canvas = document.getElementById('threejs-canvas');
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true }); // Alpha pour transparence si besoin
+        const width = canvas.clientWidth || 300; // Adapter à la taille du cercle via CSS
+        const height = canvas.clientHeight || 300;
+        renderer.setSize(width, height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        camera.position.z = 5;
+
+        // Ajout d'une lumière
+        const light = new THREE.PointLight(0xffffff, 1, 100);
+        light.position.set(10, 10, 10);
+        scene.add(light);
+
+        // Chargement de la police pour le texte 3D
+        const loader = new THREE.FontLoader();
+        loader.load('https://cdn.jsdelivr.net/npm/three@0.181.1/examples/fonts/helvetiker_regular.typeface.json', function (font) {
+            const geometry = new THREE.TextGeometry('NovaBank', {
+                font: font,
+                size: 0.8,
+                height: 0.2,
+                curveSegments: 12,
+                bevelEnabled: true,
+                bevelThickness: 0.03,
+                bevelSize: 0.02,
+                bevelOffset: 0,
+                bevelSegments: 5
+            });
+
+            // Matériau avec couleur assortie (bleu typique pour une banque, adapter via CSS si besoin : #4A90E2)
+            const material = new THREE.MeshPhongMaterial({ color: 0x4A90E2 }); // Bleu pour matcher un thème bancaire moderne
+            const textMesh = new THREE.Mesh(geometry, material);
+
+            // Centrage du texte
+            geometry.computeBoundingBox();
+            const boundingBox = geometry.boundingBox;
+            textMesh.position.x = - (boundingBox.max.x - boundingBox.min.x) / 2;
+            textMesh.position.y = - (boundingBox.max.y - boundingBox.min.y) / 2;
+
+            scene.add(textMesh);
+
+            // Fonction d'animation
+            function animate() {
+                requestAnimationFrame(animate);
+                textMesh.rotation.y += 0.005; // Rotation lente pour l'animation
+                renderer.render(scene, camera);
+            }
+            animate();
+        });
+    </script>
+    <script src="{% static 'banking/js/cursor.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
