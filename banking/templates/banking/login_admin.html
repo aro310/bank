@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="container">
-        <!-- Section gauche avec visuel et logo -->
+        <!-- Section gauche -->
         <div class="left-section">
             <div class="illustration">
                 <div class="circle"></div>
@@ -19,12 +19,23 @@
             <p class="slogan">Sécurisez et gérez avec confiance</p>
         </div>
 
-        <!-- Section droite : Formulaire admin -->
+        <!-- Section droite -->
         <div class="right-section">
             <h2 class="fade-slide">Espace Administrateur</h2>
             <p class="fade-slide delay1">Connectez-vous pour accéder au tableau de bord</p>
 
-            <form action="#" method="post" class="fade-slide delay2">
+            <!-- Messages d'erreur -->
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <p class="error-message {{ message.tags }}">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Formulaire -->
+            <form action="{% url 'login_admin' %}" method="post" class="fade-slide delay2">
+                {% csrf_token %}
                 <div class="input-group">
                     <label for="username">Nom d’utilisateur</label>
                     <input type="text" id="username" name="username" placeholder="admin123" required>
@@ -38,8 +49,7 @@
                 <button type="submit" class="btn">Se connecter</button>
                 <p class="forgot"><a href="#">Mot de passe oublié ?</a></p>
 
-                <!-- Flèche de retour -->
-                <a href="{% url 'acceuil' %}" class="back-arrow">← Retour à l'accueil</a>
+                <a href="{% url 'acceuil' %}" class="back-arrow">Retour à l'accueil</a>
             </form>
         </div>
     </div>

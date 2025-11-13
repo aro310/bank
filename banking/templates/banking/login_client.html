@@ -1,6 +1,5 @@
 {% load static %}
 
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -26,37 +25,66 @@
             <h2 class="fade-slide">Connexion Client</h2>
             <p class="fade-slide delay1">Veuillez renseigner vos informations de connexion</p>
 
-            <form action="#" method="post" class="fade-slide delay2">
+            <!-- Affichage des messages d'erreur -->
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <p class="error-message {{ message.tags }}">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form action="{% url 'login_client' %}" method="post" class="fade-slide delay2">
+                {% csrf_token %}
+                
+                <!-- Email -->
                 <div class="input-group">
                     <label for="email">Adresse e-mail</label>
                     <input type="email" id="email" name="email" placeholder="exemple@email.com" required>
                 </div>
-
-                <div class="input-group">
-                    <label for="tel">Téléphone</label>
-                    <input type="tel" id="tel" name="tel" placeholder="+261 32 12 345 67" required>
-                </div>
-
-                <div class="input-group">
-                    <label for="account">Numéro de compte</label>
-                    <input type="text" id="account" name="account" placeholder="0000 1234 5678 9012" required>
-                </div>
-
+                
+                <!-- Mot de passe -->
                 <div class="input-group">
                     <label for="password">Mot de passe</label>
                     <input type="password" id="password" name="password" placeholder="********" required>
+                </div>
+                
+                <!-- Numéro de compte -->
+                <div class="input-group">
+                    <label for="account">Numéro de compte</label>
+                    <input 
+                        type="text" 
+                        id="account" 
+                        name="account" 
+                        placeholder="Ex: CPT-A1B2C3D4" 
+                        required
+                        style="text-transform: uppercase;"
+                    >
+                    <small style="color: #777; font-size: 0.8em;">
+                        Format : CPT-XXXXXXXX (en majuscules)
+                    </small>
                 </div>
 
                 <button type="submit" class="btn">Se connecter</button>
                 <p class="forgot"><a href="#">Mot de passe oublié ?</a></p>
 
-                <!-- Flèche de retour -->
-                 <div class="">
-                    <a href="{% url 'acceuil' %}" class="back-arrow">← Retour à l'accueil</a>
-                 </div>
-                
+                <!-- Retour accueil -->
+                <div class="">
+                    <a href="{% url 'acceuil' %}" class="back-arrow">Retour à l'accueil</a>
+                </div>
             </form>
         </div>
     </div>
+
+    <script>
+        // Nettoie et formate le numéro de compte en majuscules
+        const accountInput = document.getElementById('account');
+        accountInput.addEventListener('input', function(e) {
+            let value = e.target.value.toUpperCase();
+            // Autorise seulement lettres, chiffres, tiret
+            value = value.replace(/[^A-Z0-9-]/g, '');
+            e.target.value = value;
+        });
+    </script>
 </body>
 </html>

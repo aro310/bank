@@ -57,12 +57,7 @@
         <h4>Dépôt</h4>
         <input type="hidden" name="num_compte" value="{{ compte.num_compte }}">
         <input type="number" name="montant" placeholder="Montant (MGA)" min="0.01" step="0.01" required>
-        <select name="source" required>
-            <option value="" disabled selected>Source du dépôt</option>
-            <option value="ESP">Espèces</option>
-            <option value="CHQ">Chèque</option>
-        </select>
-        <button type="submit">Valider le dépôt</button>
+        <button type="submit">Valider</button>
     </form>
     
     <form class="operation-form" id="withdrawalForm" action="{% url 'retrait' %}" method="post">
@@ -70,7 +65,7 @@
         <h4>Retrait</h4>
         <input type="hidden" name="num_compte" value="{{ compte.num_compte }}">
         <input type="number" name="montant" placeholder="Montant (MGA)" min="0.01" step="0.01" required>
-        <button type="submit">Valider le retrait</button>
+        <button type="submit">Valider</button>
     </form>
 </div>
 
