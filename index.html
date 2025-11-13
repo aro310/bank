@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Jeu Phaser - Roll Jump & Collecte</title>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      background: #222;
+      font-family: Poppins, Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 20px;
+    }
+
+    #gameContainer {
+      position: relative;
+      width: 900px;
+      height: 550px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+      border-radius: 20px;
+      overflow: hidden;
+      border: 3px solid #ffffff22;
+    }
+
+    #scoreTimer {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      color: #fff;
+      font-weight: 600;
+      font-size: 22px;
+      padding: 10px 16px;
+      background: rgba(0,0,0,0.45);
+      border-radius: 10px;
+      border: 2px solid #ffffff33;
+      z-index: 20;
+    }
+
+    #gameOverMessage {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #ff3b3b;
+      font-size: 48px;
+      font-weight: 700;
+      padding: 20px 40px;
+      background: rgba(0,0,0,0.7);
+      border-radius: 15px;
+      border: 2px solid #ff3b3b;
+      display: none;
+      z-index: 20;
+      box-shadow: 0 0 25px rgba(255,0,0,0.4);
+    }
+
+    /* 🟦 Bandeau d'indications HORS zone jouable */
+    #controlsHelp {
+      width: 900px;
+      height: 60px;
+      margin-top: 15px;   /* Important : espace sous le jeu */
+      background: rgba(0,0,0,0.55);
+      border: 2px solid #ffffff33;
+      border-radius: 12px;
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    #controlsHelp img {
+      height: 28px;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 🎮 ZONE JOUABLE -->
+  <div id="gameContainer">
+    <div id="scoreTimer">Score: 0 | Temps: 40</div>
+    <div id="gameOverMessage">GAME OVER</div>
+  </div>
+
+  <!-- 💬 Bandeau d'indications EN DEHORS du jeu -->
+  <div id="controlsHelp">
+    <span>Move : ← →</span>
+    <span>Roll Jump : espace</span>
+    <span><img src="assets/coin1.png"> +1</span>
+    <span><img src="assets/money2.png"> +3</span>
+    <span><img src="assets/dynamite4.png"> -5</span>
+  </div>
+
+  <script>
+    /* === TON SCRIPT PHASER (inchangé) === */
+
+    class MainScene extends Phaser.Scene {
+      constructor() { super('MainScene'); }
+
+      preload() {
+
+        this.load.image("bg", "assets/nova.png");
+
+        this.load.image('stand', 'assets/stand.png');
+        this.load.image('run1', 'assets/run.png');
+        this.load.image('run2', 'assets/run2.png');
+        this.load.image('run3', 'assets/run3.png');
+        this.load.image('toucher', 'assets/toucher.png');
+        this.load.image('mort', 'assets/mort.png');
+
+        for (let i = 0; i <= 36; i++) {
+          let num = i.toString().padStart(3,'0');
+          this.load.image('roll'+i, 'assets/rolj_'+num+'.png');
+        }
+
+        for (let i = 1; i <= 4; i++) {
+          this.load.image('coin'+i, 'assets/coin'+i+'.png');
+        }
+
+        this.load.image('money2', 'assets/money2.png');
+
+        for (let i = 1; i <= 4; i++) {
+          this.load.image('dynamite' + i, 'assets/dynamite' + i + '.png');
+        }
+
+        this.load.audio('coinSound', 'assets/coins.ogg');
+        this.load.audio('moneySound', 'assets/money.ogg');
+        this.load.audio('boomSound', 'assets/boom.ogg');
+        this.load.audio('backgroundMusic', 'assets/attack.wav');
+      }
+
+      create() {
+        this.bg = this.add.image(450, 275, "bg").setDisplaySize(900, 550);
+
+        this.gameOverMessage = document.getElementById('gameOverMessage');
+        this.gameOverMessage.style.display = 'none';
+
+        this.physics.world.gravity.y = 300;
+
+        this.coinSound = this.sound.add('coinSound');
+        this.moneySound = this.sound.add('moneySound');
+        this.boomSound = this.sound.add('boomSound');
+        this.backgroundMusic = this.sound.add('backgroundMusic');
+        this.backgroundMusic.play({loop: true, volume: 0.35});
+
+        this.player = this.physics.add.sprite(450, 470, 'stand').setScale(0.55);
+        this.player.setCollideWorldBounds(true);
+
+        this.cursors = this.input.keyboard.createCursorKeys();
+        this.selectKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+        this.anims.create({
+          key:'run',
+          frames:[{key:'run1'},{key:'run2'},{key:'run3'}],
+          frameRate:8,
+          repeat:-1
+        });
+
+        let rollFrames = [];
+        for(let i=0;i<=36;i++) rollFrames.push({key:'roll'+i});
+        this.anims.create({ key:'roll', frames:rollFrames, frameRate:24, repeat:0 });
+
+        this.anims.create({
+          key:'coinAnim',
+          frames:[{key:'coin1'},{key:'coin2'},{key:'coin3'},{key:'coin4'}],
+          frameRate:8,
+          repeat:-1
+        });
+
+        this.anims.create({
+          key:'dynamiteAnim',
+          frames:[{key:'dynamite1'},{key:'dynamite2'},{key:'dynamite3'},{key:'dynamite4'}],
+          frameRate:8,
+          repeat:-1
+        });
+
+        this.player.direction = 1;
+        this.isRolling = false;
+
+        this.coins = this.physics.add.group();
+        this.money2Group = this.physics.add.group();
+        this.dynamites = this.physics.add.group();
+
+        this.spawnTimer = 0;
+        this.money2SpawnTimer = 0;
+        this.dynamiteSpawnTimer = 0;
+
+        this.score = 0;
+        this.gameTime = 40;
+        this.gameOver = false;
+
+        this.time.addEvent({
+          delay:1000,
+          callback:this.updateTimer,
+          callbackScope:this,
+          loop:true
+        });
+
+        this.physics.add.overlap(this.player, this.coins, this.collectCoin, null, this);
+        this.physics.add.overlap(this.player, this.money2Group, this.collectMoney2, null, this);
+        this.physics.add.overlap(this.player, this.dynamites, this.hitDynamite, null, this);
+      }
+
+      updateTimer() {
+        if(this.gameOver) return;
+        this.gameTime--;
+        document.getElementById('scoreTimer').innerText = `Score: ${this.score} | Temps: ${this.gameTime}`;
+        if(this.gameTime<=0) this.endGame();
+      }
+
+      collectCoin(player, coin) {
+        this.score++;
+        this.coinSound.play();
+        document.getElementById('scoreTimer').innerText = `Score: ${this.score} | Temps: ${this.gameTime}`;
+
+        let plus = this.add.text(coin.x, coin.y-20, '+1', { font:'18px Arial', fill:'#ffee00' }).setOrigin(0.5);
+        this.tweens.add({ targets: plus, y: plus.y-35, alpha:0, duration:500, onComplete: ()=> plus.destroy() });
+
+        coin.destroy();
+      }
+
+      collectMoney2(player, money2) {
+        this.score += 3;
+        this.moneySound.play();
+        document.getElementById('scoreTimer').innerText = `Score: ${this.score} | Temps: ${this.gameTime}`;
+
+        let plus3 = this.add.text(money2.x, money2.y-20, '+3', { font:'18px Arial', fill:'#00ff00' }).setOrigin(0.5);
+        this.tweens.add({ targets: plus3, y: plus3.y-35, alpha:0, duration:500, onComplete: ()=> plus3.destroy() });
+
+        money2.destroy();
+      }
+
+      hitDynamite(player, dynamite) {
+        this.score -= 5;
+        this.boomSound.play();
+        document.getElementById('scoreTimer').innerText = `Score: ${this.score} | Temps: ${this.gameTime}`;
+
+        let moins5 = this.add.text(dynamite.x, dynamite.y - 20, '-5', { font:'18px Arial', fill:'#ff0000' }).setOrigin(0.5);
+        this.tweens.add({ targets: moins5, y: moins5.y - 35, alpha: 0, duration: 500, onComplete: ()=> moins5.destroy() });
+
+        this.player.anims.stop();
+        this.player.setTexture('toucher');
+
+        this.time.delayedCall(2000, () => {
+          if (!this.gameOver) {
+            this.player.setTexture('stand');
+            if (this.score < 0) this.endGame();
+          }
+        });
+
+        dynamite.destroy();
+      }
+
+      endGame() {
+        this.gameOver = true;
+        this.coins.clear(true, true);
+        this.money2Group.clear(true, true);
+        this.dynamites.clear(true, true);
+
+        this.player.anims.stop();
+        this.player.setTexture('mort');
+
+        this.gameOverMessage.style.display = 'block';
+
+        this.time.delayedCall(1500, () => {
+          this.scene.restart();
+        });
+      }
+
+      spawnCoin() {
+        if(this.gameOver) return;
+        let x = Phaser.Math.Between(50, 850);
+        let coin = this.physics.add.sprite(x, 0, 'coin1').setScale(0.28);
+        coin.play('coinAnim');
+        this.coins.add(coin);
+      }
+
+      spawnMoney2() {
+        if(this.gameOver) return;
+        let x = Phaser.Math.Between(50, 850);
+        let money2 = this.physics.add.sprite(x, 0, 'money2').setScale(0.55);
+        this.money2Group.add(money2);
+      }
+
+      spawnDynamite() {
+        if(this.gameOver) return;
+        let x = Phaser.Math.Between(50, 850);
+        let dynamite = this.physics.add.sprite(x, 0, 'dynamite1').setScale(0.4);
+        dynamite.play('dynamiteAnim');
+        this.dynamites.add(dynamite);
+      }
+
+      update(time, delta) {
+        if(this.gameOver) return;
+
+        let speed = 3;
+        let moving = false;
+
+        if(this.cursors.left.isDown) { this.player.direction=-1; moving=true; }
+        else if(this.cursors.right.isDown) { this.player.direction=1; moving=true; }
+
+        if(moving && Phaser.Input.Keyboard.JustDown(this.selectKey)) {
+          this.isRolling = true;
+          speed = 5;
+          this.player.anims.play('roll', true);
+        }
+
+        if(moving || this.isRolling) this.player.x += speed*this.player.direction;
+
+        if(this.isRolling) {
+          if(!this.player.anims.isPlaying || this.player.anims.currentAnim.key!=='roll') this.isRolling=false;
+        } else if(moving) {
+          this.player.anims.play('run', true);
+          this.player.flipX = this.player.direction === -1;
+        } else {
+          this.player.anims.stop();
+          this.player.setTexture('stand');
+        }
+
+        this.spawnTimer += delta;
+        if(this.spawnTimer > 1000) { this.spawnCoin(); this.spawnTimer=0; }
+
+        this.money2SpawnTimer += delta;
+        if(this.money2SpawnTimer > 5000) { this.spawnMoney2(); this.money2SpawnTimer=0; }
+
+        this.dynamiteSpawnTimer += delta;
+        if(this.dynamiteSpawnTimer > 7000) { this.spawnDynamite(); this.dynamiteSpawnTimer=0; }
+
+        this.coins.getChildren().forEach(c => { if(c.y > 550) c.destroy(); });
+        this.money2Group.getChildren().forEach(m => { if(m.y > 550) m.destroy(); });
+        this.dynamites.getChildren().forEach(d => { if(d.y > 550) d.destroy(); });
+      }
+    }
+
+    const config = {
+      type: Phaser.AUTO,
+      parent: "gameContainer",
+      width: 900,
+      height: 550,
+      physics: {
+        default: "arcade",
+        arcade: { gravity: { y: 0 } }
+      },
+      scene: [MainScene]
+    };
+
+    new Phaser.Game(config);
+  </script>
+
+</body>
+</html>
