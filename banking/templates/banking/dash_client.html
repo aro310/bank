@@ -5,150 +5,578 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NovaBank - Client</title>
-    <link rel="stylesheet" href="{% static 'banking/dash_client.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ===== Variables de Couleur & Reset ===== */
+        :root {
+            --color-primary: #18534F;
+            --color-primary-dark: #103a37;
+            --color-primary-light: #226D68;
+            --color-bg: #F8F9FA;
+            --color-bg-alt: #FFFFFF;
+            --color-text: #212529;
+            --color-text-light: #6C757D;
+            --color-text-inverted: #ECF8F6;
+            --color-border: #DEE2E6;
+            --color-green: #2E8B57;
+            --color-red: #D9534F;
+            --color-blue: #0275D8;
+            --color-yellow: #F0AD4E;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            display: flex;
+            flex-direction: column; /* Changé pour un layout vertical */
+            min-height: 100vh;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* ===== Header Principal ===== */
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background-color: var(--color-primary);
+            color: var(--color-text-inverted);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 45px;
+            height: 45px;
+            background-color: var(--color-text-inverted);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .header-text h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        .header-text h3 {
+            font-size: 0.9rem;
+            font-weight: 400;
+            opacity: 0.8;
+            margin: 0;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .client-balance {
+            background-color: var(--color-primary-light);
+            padding: 10px 15px;
+            border-radius: 8px;
+            text-align: right;
+        }
+        .client-balance span {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            display: block;
+        }
+        .client-balance strong {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .btn-logout {
+            background: none;
+            border: none;
+            color: var(--color-text-inverted);
+            opacity: 0.8;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .btn-logout:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        .btn-logout svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* ===== Barre de Navigation Secondaire (Onglets) ===== */
+        .main-nav {
+            background-color: var(--color-bg-alt);
+            border-bottom: 1px solid var(--color-border);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+        .main-nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 10px;
+        }
+        .main-nav li a {
+            display: block;
+            padding: 16px 25px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--color-text-light);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .main-nav li a:hover {
+            color: var(--color-text);
+        }
+        .main-nav li a.active {
+            color: var(--color-primary);
+            font-weight: 600;
+            border-bottom-color: var(--color-primary);
+        }
+
+        /* ===== Contenu Principal ===== */
+        .page-content {
+            padding: 30px;
+            flex-grow: 1;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto; /* Centre le contenu */
+        }
+
+        .content-section {
+            display: none; /* Caché par défaut */
+        }
+        .content-section.active {
+            display: block; /* Affiché par JS */
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== Cartes (Card) ===== */
+        .card {
+            background-color: var(--color-bg-alt);
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            margin-bottom: 25px;
+            overflow: hidden; /* Pour les tab-nav */
+        }
+        .card-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--color-border);
+        }
+        .card-header h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        .card-body {
+            padding: 25px;
+        }
+
+        /* ===== Tabs (pour Dépôt/Retrait) ===== */
+        .tab-nav {
+            display: flex;
+            background-color: var(--color-bg);
+            border-bottom: 1px solid var(--color-border);
+        }
+        .tab-link {
+            flex: 1;
+            padding: 18px 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--color-text-light);
+            border: none;
+            background: none;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .tab-link:hover {
+            color: var(--color-primary);
+        }
+        .tab-link.active {
+            color: var(--color-primary);
+            font-weight: 600;
+            background-color: var(--color-bg-alt);
+        }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* ===== Formulaires ===== */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .form-group input[type="number"],
+        .form-group select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1.5px solid var(--color-border);
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(24, 83, 79, 0.15);
+        }
+        /* Style pour le select */
+        .form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.7rem center;
+            background-repeat: no-repeat;
+            background-size: 1.2em 1.2em;
+            padding-right: 2.5rem;
+        }
+
+        /* ===== Boutons ===== */
+        .btn {
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%; /* Boutons pleine largeur */
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: var(--color-text-inverted);
+        }
+        .btn-primary:hover {
+            background-color: var(--color-primary-dark);
+        }
+
+        /* ===== Tables ===== */
+        .table-responsive { overflow-x: auto; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+        table th, table td {
+            border-bottom: 1px solid var(--color-border);
+            padding: 15px;
+            text-align: left;
+            vertical-align: middle;
+        }
+        table th {
+            background-color: var(--color-bg);
+            font-weight: 600;
+            color: var(--color-text-light);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+        table tbody tr:hover {
+            background-color: #eaf6f5;
+        }
+        .no-data {
+            text-align: center;
+            color: var(--color-text-light);
+            font-style: italic;
+            padding: 20px;
+        }
+        
+        /* ===== Messages Django ===== */
+        .messages-container {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+        .message {
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            margin-bottom: 10px;
+            border: 1px solid transparent;
+        }
+        /* Tags de message Django */
+        .message.success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .message.error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .message.warning {
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+            color: #856404;
+        }
+        .message.info {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+
+    </style>
 </head>
 <body>
 
-<header>
-    <div class="header-text">
-        <h2>NovaBank - Client</h2>
-        <h3>Bienvenue {{ client.prenom }} {{ client.nom }}</h3>
-    </div>
-    <div class="header-right">
-        <div class="header-logo"></div>
-        <div class="client-balance">
-            Solde: {{ compte.solde|default:"N/A" }} MGA
+    <header class="main-header">
+        <div class="header-left">
+            <div class="logo">N</div>
+            <div class="header-text">
+                <h2>NovaBank</h2>
+                <h3>Bienvenue, <strong>{{ client.prenom }} {{ client.nom }}</strong></h3>
+            </div>
         </div>
-    </div>
-</header>
-
-<nav>
-    <ul>
-        <li><a href="{% url 'acceuil' %}">Accueil</a></li>
-        <li id="operations-link"><a>Opérations <span class="nav-arrow">▼</span></a></li>
-        <li id="history-link"><a>Historique des opérations <span class="nav-arrow">▼</span></a></li>
-        <li>{{ client.prenom }}</li>
-        <li>
-            <a href="{% url 'logout' %}" class="btn-logout">
-                Quitter
-                <svg ...>...</svg>
+        <div class="header-right">
+            <div class="client-balance">
+                <span>Solde actuel</span>
+                <strong>{{ compte.solde|default:"0.00" }} MGA</strong>
+            </div>
+            <a href="{% url 'logout' %}" class="btn-logout" title="Déconnexion">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M15.75 9l-2.25-2.25M15.75 9h-6.75" />
+                </svg>
             </a>
-        </li>
-    </ul>
-</nav>
+        </div>
+    </header>
 
-{% if messages %}
-    <div class="messages-container">
-        {% for message in messages %}
-            <div class="message {{ message.tags }}">{{ message }}</div>
-        {% endfor %}
-    </div>
-{% endif %}
+    <nav class="main-nav">
+        <ul>
+            <li><a href="{% url 'acceuil' %}" class="nav-link active" data-target="accueil">Accueil & Historique</a></li>
+            <li><a href="#" class="nav-link" data-target="operations">Effectuer une Opération</a></li>
+        </ul>
+    </nav>
 
+    <main class="page-content">
 
-<div class="dropdown-section" id="operationsDropdown">
-    <ul>
-        <li id="deposit">Dépôts</li>
-        <li id="withdrawal">Retraits</li>
-    </ul>
-    
-    <form class="operation-form" id="depositForm" action="{% url 'depot' %}" method="post">
-        {% csrf_token %}
-        <h4>Dépôt</h4>
-        <input type="hidden" name="num_compte" value="{{ compte.num_compte }}">
-        <input type="number" name="montant" placeholder="Montant (MGA)" min="0.01" step="0.01" required>
-        <select name="source" required>
-            <option value="" disabled selected>Source du dépôt</option>
-            <option value="ESP">Espèces</option>
-            <option value="CHQ">Chèque</option>
-        </select>
-        <button type="submit">Valider le dépôt</button>
-    </form>
-    
-    <form class="operation-form" id="withdrawalForm" action="{% url 'retrait' %}" method="post">
-        {% csrf_token %}
-        <h4>Retrait</h4>
-        <input type="hidden" name="num_compte" value="{{ compte.num_compte }}">
-        <input type="number" name="montant" placeholder="Montant (MGA)" min="0.01" step="0.01" required>
-        <button type="submit">Valider le retrait</button>
-    </form>
-</div>
-
-<div class="dropdown-section" id="historyDropdown">
-    <div id="historyContainer">
-        <table id="historyTable">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Type</th>
-                    <th>Montant (MGA)</th>
-                    </tr>
-            </thead>
-            <tbody>
-                {% for op in operations %}
-                <tr>
-                    <td>{{ op.date_heure|date:"d/m/Y H:i" }}</td>
-                    <td>{{ op.get_type_operation_display }}</td> <td>{{ op.montant }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="3" style="text-align: center;">Aucune opération récente.</td>
-                </tr>
+        {% if messages %}
+            <ul class="messages-container">
+                {% for message in messages %}
+                    <li class="message {{ message.tags }}">{{ message }}</li>
                 {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
+            </ul>
+        {% endif %}
 
-<script>
-// --- ON GARDE UNIQUEMENT LE JS QUI GÈRE L'AFFICHAGE (LES MENUS) ---
+        <section id="accueil" class="content-section active">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Historique des Opérations</h4>
+                </div>
+                <div class="card-body" style="padding: 0;"> <div class="table-responsive">
+                        <table id="historyTable">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Montant (MGA)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for op in operations %}
+                                <tr>
+                                    <td>{{ op.date_heure|date:"d/m/Y H:i" }}</td>
+                                    <td>{{ op.get_type_operation_display }}</td>
+                                    <td>{{ op.montant }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3" class="no-data">Aucune opération récente.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-let operationsLink = document.getElementById('operations-link');
-let historyLink = document.getElementById('history-link');
-let operationsDropdown = document.getElementById('operationsDropdown');
-let historyDropdown = document.getElementById('historyDropdown');
-let depositItem = document.getElementById('deposit');
-let withdrawalItem = document.getElementById('withdrawal');
-let depositForm = document.getElementById('depositForm');
-let withdrawalForm = document.getElementById('withdrawalForm');
-let historyContainer = document.getElementById('historyContainer');
+        <section id="operations" class="content-section">
+            <div class="card">
+                <div class="tab-nav">
+                    <button class="tab-link active" data-target="depot">Dépôt</button>
+                    <button class="tab-link" data-target="retrait">Retrait</button>
+                </div>
 
-// Toggle dropdowns
-operationsLink.addEventListener('click', () => {
-    operationsDropdown.classList.toggle('active');
-    operationsLink.classList.toggle('open');
-    historyDropdown.classList.remove('active');
-    historyLink.classList.remove('open');
-    depositForm.classList.remove('show');
-    withdrawalForm.classList.remove('show');
-    // historyContainer.classList.remove('show'); // On laisse l'historique affiché
-});
+                <div id="depot" class="tab-content active">
+                    <div class="card-body">
+                        <form action="{% url 'depot' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="num_compte" value="{{ compte.num_compte }}">
+                            
+                            <div class="form-group">
+                                <label for="montant-depot">Montant (MGA)</label>
+                                <input type="number" id="montant-depot" name="montant" placeholder="Montant (MGA)" min="0.01" step="0.01" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="source-depot">Source du dépôt</label>
+                                <select id="source-depot" name="source" required>
+                                    <option value="" disabled selected>Choisir une source...</option>
+                                    <option value="ESP">Espèces</option>
+                                    <option value="CHQ">Chèque</option>
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Valider le dépôt</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div id="retrait" class="tab-content">
+                    <div class="card-body">
+                        <form action="{% url 'retrait' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="num_compte" value="{{ compte.num_compte }}">
+                            
+                            <div class="form-group">
+                                <label for="montant-retrait">Montant (MGA)</label>
+                                <input type="number" id="montant-retrait" name="montant" placeholder="Montant (MGA)" min="0.01" step="0.01" required>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Valider le retrait</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-historyLink.addEventListener('click', () => {
-    historyDropdown.classList.toggle('active');
-    historyLink.classList.toggle('open');
-    operationsDropdown.classList.remove('active');
-    operationsLink.classList.remove('open');
-    depositForm.classList.remove('show');
-    withdrawalForm.classList.remove('show');
-    historyContainer.classList.add('show');
-});
+    </main>
 
-// Afficher le formulaire correspondant
-depositItem.addEventListener('click', () => {
-    depositForm.classList.add('show');
-    withdrawalForm.classList.remove('show');
-});
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // ===== Gestion de la Navigation Principale =====
+        const navLinks = document.querySelectorAll('.main-nav .nav-link');
+        const contentSections = document.querySelectorAll('.page-content .content-section');
 
-withdrawalItem.addEventListener('click', () => {
-    withdrawalForm.classList.add('show');
-    depositForm.classList.remove('show');
-});
+        navLinks.forEach(link => {
+            // Ne pas attacher d'événement si le lien est une vraie URL (comme Accueil)
+            // Sauf si on veut un effet SPA, ce qu'on fait ici
+            if (link.getAttribute('href') === '#') {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('data-target');
+                    const targetSection = document.getElementById(targetId);
 
-// --- TOUTE LA LOGIQUE DE GESTION DU SOLDE EN JS EST SUPPRIMÉE ---
-// (car elle est maintenant gérée par Django côté serveur)
+                    // Gérer l'état actif du lien
+                    navLinks.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Activer le lien "Accueil" si on clique sur opérations
+                    if (targetId === 'operations') {
+                        document.querySelector('.nav-link[data-target="accueil"]').classList.remove('active');
+                    } else {
+                        document.querySelector('.nav-link[data-target="operations"]').classList.remove('active');
+                    }
+                    this.classList.add('active');
 
-</script>
+
+                    // Gérer l'affichage de la section
+                    contentSections.forEach(section => section.classList.remove('active'));
+                    if (targetSection) {
+                        targetSection.classList.add('active');
+                    }
+                });
+            }
+
+            // Gérer le cas où l'utilisateur clique sur le lien "Accueil"
+            const accueilLink = document.querySelector('.nav-link[data-target="accueil"]');
+            if (accueilLink) {
+                 accueilLink.addEventListener('click', function(e) {
+                    // Si c'est le lien d'accueil, on veut peut-être juste rafraîchir
+                    // ou s'assurer que l'état est correct
+                    if (this.getAttribute('href') !== '#') {
+                        return; // Laisse le lien recharger la page
+                    }
+                    
+                    e.preventDefault();
+                    navLinks.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+
+                    contentSections.forEach(section => section.classList.remove('active'));
+                    document.getElementById('accueil').classList.add('active');
+                });
+            }
+        });
+
+        // ===== Gestion des Onglets (Tabs) pour les Opérations =====
+        const operationsCard = document.querySelector('#operations .card');
+        if (operationsCard) {
+            const tabLinks = operationsCard.querySelectorAll('.tab-nav .tab-link');
+            const tabContents = operationsCard.querySelectorAll('.tab-content');
+
+            tabLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('data-target');
+
+                    // Gérer l'état actif du lien d'onglet
+                    tabLinks.forEach(lnk => lnk.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Gérer l'affichage du contenu d'onglet
+                    tabContents.forEach(content => {
+                        if (content.id === targetId) {
+                            content.classList.add('active');
+                        } else {
+                            content.classList.remove('active');
+                        }
+                    });
+                });
+            });
+        }
+    });
+    </script>
 
 </body>
 </html>

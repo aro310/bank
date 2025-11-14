@@ -5,186 +5,737 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NovaBank - Admin</title>
-    <link rel="stylesheet" href="{% static 'banking/admin.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ===== Variables de Couleur & Reset ===== */
+        :root {
+            --color-primary: #18534F;
+            --color-primary-dark: #103a37;
+            --color-primary-light: #226D68;
+            --color-bg: #F8F9FA;
+            --color-bg-alt: #FFFFFF;
+            --color-text: #212529;
+            --color-text-light: #6C757D;
+            --color-text-inverted: #ECF8F6;
+            --color-border: #DEE2E6;
+            --color-green: #2E8B57;
+            --color-red: #E94B35;
+            --color-red-dark: #B22222;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* ===== Layout Principal (Sidebar + Content) ===== */
+        .sidebar {
+            width: 260px;
+            flex-shrink: 0;
+            background-color: var(--color-primary);
+            color: var(--color-text-inverted);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .main-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        /* ===== Sidebar Header ===== */
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 25px 20px;
+            border-bottom: 1px solid var(--color-primary-light);
+        }
+
+        .sidebar-logo {
+            width: 45px;
+            height: 45px;
+            background-color: var(--color-text-inverted);
+            border-radius: 8px;
+            /* Ajoutez votre logo ici */
+            /* background-image: url('logo.png'); */
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+        .sidebar-logo::after {
+            content: "N";
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        /* ===== Sidebar Navigation ===== */
+        .sidebar-nav {
+            flex-grow: 1;
+            margin-top: 20px;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+        }
+
+        .sidebar-nav li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--color-text-inverted);
+            opacity: 0.8;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .sidebar-nav li a:hover {
+            opacity: 1;
+            background-color: var(--color-primary-light);
+        }
+
+        .sidebar-nav li a.active {
+            opacity: 1;
+            background-color: var(--color-primary-light);
+            font-weight: 600;
+        }
+        /* Indicateur actif */
+        .sidebar-nav li a.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background-color: var(--color-text-inverted);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            stroke-width: 2;
+        }
+
+        /* ===== Sidebar Footer (User/Logout) ===== */
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid var(--color-primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .user-info {
+            font-size: 0.9rem;
+            font-weight: 500;
+            max-width: 160px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .btn-logout {
+            background: none;
+            border: none;
+            color: var(--color-text-inverted);
+            opacity: 0.8;
+            cursor: pointer;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .btn-logout:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        .btn-logout svg {
+            width: 22px;
+            height: 22px;
+        }
+
+
+        /* ===== Main Header (dans main-content) ===== */
+        .main-header {
+            padding: 20px 30px;
+            background-color: var(--color-bg-alt);
+            border-bottom: 1px solid var(--color-border);
+        }
+        .main-header h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+        }
+
+        /* ===== Contenu Principal ===== */
+        .page-content {
+            padding: 30px;
+        }
+
+        .content-section {
+            display: none; /* Caché par défaut par JS */
+        }
+        .content-section.active {
+            display: block; /* Affiché par JS */
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== Cartes (Card) ===== */
+        .card {
+            background-color: var(--color-bg-alt);
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            margin-bottom: 25px;
+        }
+        .card-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card-header h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .card-body {
+            padding: 25px;
+        }
+
+        /* ===== Section Accueil ===== */
+        .welcome-card h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .welcome-card p {
+            font-size: 1rem;
+            color: var(--color-text-light);
+        }
+
+        /* ===== Tabs (pour la section Clients) ===== */
+        .tab-nav {
+            display: flex;
+            gap: 4px;
+            border-bottom: 1px solid var(--color-border);
+            padding: 0 25px;
+        }
+        .tab-link {
+            padding: 15px 20px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--color-text-light);
+            border: none;
+            background: none;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .tab-link:hover {
+            color: var(--color-text);
+        }
+        .tab-link.active {
+            color: var(--color-primary);
+            font-weight: 600;
+            border-bottom-color: var(--color-primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* ===== Formulaires ===== */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        /* Ajout d'un label pour l'accessibilité (recommandé) */
+        .form-group label {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="password"],
+        .form-group input[type="date"],
+        .form-group input[type="search"] {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1.5px solid var(--color-border);
+            font-size: 0.95rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(24, 83, 79, 0.15);
+        }
+
+        /* ===== Tables ===== */
+        .table-responsive {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        table th, table td {
+            border: 1px solid var(--color-border);
+            padding: 12px 15px;
+            text-align: left;
+            vertical-align: middle;
+        }
+        table th {
+            background-color: var(--color-bg);
+            font-weight: 600;
+        }
+        table tbody tr:nth-child(even) {
+            background-color: var(--color-bg);
+        }
+        table tbody tr:hover {
+            background-color: #eaf6f5;
+        }
+
+        /* Style pour les données vides */
+        .no-data {
+            text-align: center;
+            color: var(--color-text-light);
+            font-style: italic;
+            padding: 20px;
+        }
+
+        /* ===== Boutons ===== */
+        .btn {
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: var(--color-text-inverted);
+        }
+        .btn-primary:hover {
+            background-color: var(--color-primary-dark);
+        }
+        
+        .btn-edit { background-color: var(--color-primary-light); color: var(--color-text-inverted); }
+        .btn-delete { background-color: var(--color-red); color: #fff; }
+        .btn-validate { background-color: var(--color-green); color: #fff; }
+        .btn-refuse { background-color: var(--color-red); color: #fff; }
+
+        .btn-edit:hover { background-color: var(--color-primary); }
+        .btn-delete:hover { background-color: var(--color-red-dark); }
+        .btn-validate:hover { background-color: #256d45; }
+        .btn-refuse:hover { background-color: var(--color-red-dark); }
+
+        /* Actions de formulaire */
+        .form-actions {
+            margin-top: 20px;
+            text-align: right;
+        }
+        
+        /* Actions groupées (Tableau Opérations) */
+        .bulk-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Champ de recherche (Historique) */
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .search-container input {
+            flex-grow: 1;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>NovaBank - Espace Administrateur</h1>
-            <p>Bienvenue, <strong>{{ user.get_full_name|default:user.username }}</strong> | 
-            <a href="{% url 'logout' %}" style="color: #fff; text-decoration: underline;">Déconnexion</a></p>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo"></div>
+            <h2>NovaBank Admin</h2>
+        </div>
+
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="#" class="nav-link active" data-target="accueil">
+                    <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6-4a1 1 0 001-1v-1a1 1 0 10-2 0v1a1 1 0 001 1zm5 0a1 1 0 001-1v-1a1 1 0 10-2 0v1a1 1 0 001 1z" />
+                    </svg>
+                    Accueil
+                </a></li>
+                <li><a href="#" class="nav-link" data-target="clients">
+                    <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    Clients
+                </a></li>
+                <li><a href="#" class="nav-link" data-target="operations">
+                    <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h.01M12 7h.01M16 7h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.934M21 12c0-4.418-4.03-8-9-8A9.863 9.863 0 003 12m18 0v.01M12 12V6m0 6v6m0-6H6m6 0h6" />
+                    </svg>
+                    Opérations
+                </a></li>
+                <li><a href="#" class="nav-link" data-target="historique">
+                    <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Historique
+                </a></li>
+            </ul>
+        </nav>
+
+        <div class="sidebar-footer">
+            <span class="user-info" title="{{ user.get_full_name|default:user.username }}">
+                <strong>{{ user.get_full_name|default:user.username }}</strong>
+            </span>
+            <a href="{% url 'logout' %}" class="btn-logout" title="Déconnexion">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+            </a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="main-header">
+            <h1 id="pageTitle">Accueil</h1>
         </header>
-
-        {% if messages %}
-            {% for message in messages %}
-                <div class="message {{ message.tags }}">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-
-        <div class="section">
-            <h2>Créer un Nouveau Client</h2>
-            <form method="post">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="create_client">
-                <div class="form-group">
-                    <label>Prénom</label>
-                    <input type="text" name="prenom" required>
-                </div>
-                <div class="form-group">
-                    <label>Nom</label>
-                    <input type="text" name="nom" required>
-                </div>
-                <div class="form-group">
-                    <label>Email (sera le nom d'utilisateur)</label>
-                    <input type="email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label>Mot de passe</label>
-                    <input type="password" name="password" required>
-                </div>
-                <div class="form-group">
-                    <label>Téléphone</label>
-                    <input type="text" name="telephone">
-                </div>
-                <div class="form-group">
-                    <label>Date de naissance</label>
-                    <input type="date" name="date_naissance" required>
-                </div>
-                <button type="submit" class="btn btn-create">Créer le client + compte</button>
-            </form>
-        </div>
         
-        <div class="section">
-            <h2>Liste et Gestion des Clients</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nom Complet</th>
-                        <th>Email</th>
-                        <th>Téléphone</th>
-                        <th>Compte Bancaire</th>
-                        <th>Solde</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for cli in clients %}
-                    <tr>
-                        <td>{{ cli.id }}</td>
-                        <td>{{ cli.prenom }} {{ cli.nom }}</td>
-                        <td>{{ cli.email }}</td>
-                        <td>{{ cli.telephone|default:"N/A" }}</td>
-                        <td>
-                            {% with compte=cli.comptes.first %}
-                                {{ compte.num_compte|default:"N/A" }}
-                            {% endwith %}
-                        </td>
-                        <td class="client-solde">
-                            {% with compte=cli.comptes.first %}
-                                {{ compte.solde|default:"0.00" }} MGA
-                            {% endwith %}
-                        </td>
-                        <td class="actions">
-                            <a href="{% url 'edit_client' cli.id %}" class="btn btn-edit">Modifier</a> 
-                            <form method="post" action="{% url 'delete_client' cli.id %}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce client et son compte ?');" style="display: inline;">
-                                {% csrf_token %}
-                                <input type="hidden" name="action" value="delete_client">
-                                <button type="submit" class="btn btn-delete">Supprimer</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="7" class="no-data">Aucun client enregistré.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <div class="section">
-            <h2>Opérations en Attente de Validation</h2>
-            <form method="post">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="bulk_action">
-                <table>
-                    <thead>
-                        <tr>
-                            <th><input type="checkbox" id="select-all"></th>
-                            <th>Date</th>
-                            <th>Client</th>
-                            <th>Compte</th>
-                            <th>Type</th>
-                            <th>Montant</th>
-                            <th>Source</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for op in pending_operations %}
-                        <tr>
-                            <td><input type="checkbox" name="op_ids" value="{{ op.id }}"></td>
-                            <td>{{ op.date_heure|date:"d/m/Y H:i" }}</td>
-                            <td>{{ op.compte.client.prenom }} {{ op.compte.client.nom }}</td>
-                            <td>{{ op.compte.num_compte }}</td>
-                            <td>{{ op.get_type_operation_display }}</td>
-                            <td>{{ op.montant }} MGA</td>
-                            <td>{{ op.get_source_display }}</td>
-                            <td class="actions">
-                                <button type="submit" name="validate_{{ op.id }}" class="btn btn-validate">Valider</button>
-                                <button type="submit" name="refuse_{{ op.id }}" class="btn btn-refuse">Refuser</button>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="8" class="no-data">Aucune opération en attente.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% if pending_operations %}
-                <div style="margin-top: 15px;">
-                    <button type="submit" name="bulk_validate" class="btn btn-validate">Valider sélection</button>
-                    <button type="submit" name="bulk_refuse" class="btn btn-refuse">Refuser sélection</button>
-                </div>
-                {% endif %}
-            </form>
-        </div>
+        <div class="page-content">
 
-        <div class="section">
-            <h2>10 Dernières Opérations Validées</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Client</th>
-                        <th>Type</th>
-                        <th>Montant</th>
-                        <th>Statut</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for op in recent_operations %}
-                    <tr>
-                        <td>{{ op.date_heure|date:"d/m/Y H:i" }}</td>
-                        <td>{{ op.compte.client.prenom }} {{ op.compte.client.nom }}</td>
-                        <td>{{ op.get_type_operation_display }}</td>
-                        <td>{{ op.montant }} MGA</td>
-                        <td>{{ op.get_statut_display }}</td>
-                    </tr>
-                    {% empty %}
-                    <tr><td colspan="5" class="no-data">Aucune opération récente.</td></tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <section id="accueil" class="content-section active">
+                <div class="card welcome-card">
+                    <div class="card-body">
+                        <h2>Bonjour, {{ user.get_full_name|default:user.username }} !</h2>
+                        <p>Bienvenue sur le panneau d'administration de NovaBank. Sélectionnez une option dans le menu de gauche pour commencer.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="clients" class="content-section">
+                <div class="card">
+                    <div class="tab-nav">
+                        <button class="tab-link active" data-target="listClients">Liste des Clients</button>
+                        <button class="tab-link" data-target="createClient">Créer un Client</button>
+                    </div>
+
+                    <div id="listClients" class="tab-content active">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nom Complet</th>
+                                            <th>Email</th>
+                                            <th>Téléphone</th>
+                                            <th>Compte Bancaire</th>
+                                            <th>Solde</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for cli in clients %}
+                                        <tr>
+                                            <td>{{ cli.id }}</td>
+                                            <td>{{ cli.prenom }} {{ cli.nom }}</td>
+                                            <td>{{ cli.email }}</td>
+                                            <td>{{ cli.telephone|default:"N/A" }}</td>
+                                            <td>{% with compte=cli.comptes.first %}{{ compte.num_compte|default:"N/A" }}{% endwith %}</td>
+                                            <td>{% with compte=cli.comptes.first %}{{ compte.solde|default:"0.00" }} MGA{% endwith %}</td>
+                                            <td>
+                                                <a href="{% url 'edit_client' cli.id %}" class="btn btn-edit">Modifier</a>
+                                                <form method="post" action="{% url 'delete_client' cli.id %}" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr ?');">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-delete">Supprimer</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr><td colspan="7" class="no-data">Aucun client enregistré.</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="createClient" class="tab-content">
+                        <div class="card-body">
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="create_client">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="prenom">Prénom</label>
+                                        <input type="text" id="prenom" name="prenom" placeholder="Prénom" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="nom">Nom</label>
+                                        <input type="text" id="nom" name="nom" placeholder="Nom" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email">Email</label>
+                                        <input type="email" id="email" name="email" placeholder="Email" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="password">Mot de passe</label>
+                                        <input type="password" id="password" name="password" placeholder="Mot de passe" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="telephone">Téléphone</label>
+                                        <input type="text" id="telephone" name="telephone" placeholder="Téléphone">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="date_naissance">Date de naissance</label>
+                                        <input type="date" id="date_naissance" name="date_naissance" placeholder="Date de naissance" required>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">Créer le client + compte</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="operations" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Opérations en Attente</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="bulk_action">
+                            <div class="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th><input type="checkbox" id="select-all"></th>
+                                            <th>Date</th>
+                                            <th>Client</th>
+                                            <th>Compte</th>
+                                            <th>Type</th>
+                                            <th>Montant</th>
+                                            <th>Source</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for op in pending_operations %}
+                                        <tr>
+                                            <td><input type="checkbox" name="op_ids" value="{{ op.id }}"></td>
+                                            <td>{{ op.date_heure|date:"d/m/Y H:i" }}</td>
+                                            <td>{{ op.compte.client.prenom }} {{ op.compte.client.nom }}</td>
+                                            <td>{{ op.compte.num_compte }}</td>
+                                            <td>{{ op.get_type_operation_display }}</td>
+                                            <td>{{ op.montant }} MGA</td>
+                                            <td>{{ op.get_source_display }}</td>
+                                            <td>
+                                                <button type="submit" name="validate_{{ op.id }}" class="btn btn-validate">Valider</button>
+                                                <button type="submit" name="refuse_{{ op.id }}" class="btn btn-refuse">Refuser</button>
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr><td colspan="8" class="no-data">Aucune opération en attente.</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="bulk-actions">
+                                </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <section id="historique" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Historique des Opérations</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="search-container form-group">
+                            <input type="search" id="historyAccount" placeholder="Filtrer par numéro de compte (non fonctionnel sans JS d'API)">
+                            <button id="loadHistory" class="btn btn-primary">Afficher</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Client</th>
+                                        <th>Type</th>
+                                        <th>Montant</th>
+                                        <th>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for op in recent_operations %}
+                                    <tr>
+                                        <td>{{ op.date_heure|date:"d/m/Y H:i" }}</td>
+                                        <td>{{ op.compte.client.prenom }} {{ op.compte.client.nom }}</td>
+                                        <td>{{ op.get_type_operation_display }}</td>
+                                        <td>{{ op.montant }} MGA</td>
+                                        <td>{{ op.get_statut_display }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr><td colspan="5" class="no-data">Aucune opération récente.</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
         </div>
-    </div>
+    </main>
 
     <script>
-        // Sélectionner tout
-        document.getElementById('select-all').addEventListener('change', function() {
-            document.querySelectorAll('input[name="op_ids"]').forEach(cb => cb.checked = this.checked);
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // ===== Gestion de la Navigation Principale (Sidebar) =====
+            const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');
+            const contentSections = document.querySelectorAll('.main-content .content-section');
+            const pageTitle = document.getElementById('pageTitle');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('data-target');
+                    const targetSection = document.getElementById(targetId);
+
+                    // Gérer l'état actif du lien
+                    navLinks.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Gérer l'affichage de la section
+                    contentSections.forEach(section => section.classList.remove('active'));
+                    if (targetSection) {
+                        targetSection.classList.add('active');
+                    }
+
+                    // Mettre à jour le titre de la page
+                    pageTitle.textContent = this.textContent.trim();
+                });
+            });
+
+            // ===== Gestion des Onglets (Tabs) pour la section Clients =====
+            const tabContainers = document.querySelectorAll('#clients .card');
+
+            tabContainers.forEach(container => {
+                const tabLinks = container.querySelectorAll('.tab-nav .tab-link');
+                const tabContents = container.querySelectorAll('.tab-content');
+
+                tabLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const targetId = this.getAttribute('data-target');
+
+                        // Gérer l'état actif du lien d'onglet
+                        tabLinks.forEach(lnk => lnk.classList.remove('active'));
+                        this.classList.add('active');
+
+                        // Gérer l'affichage du contenu d'onglet
+                        tabContents.forEach(content => {
+                            if (content.id === targetId) {
+                                content.classList.add('active');
+                            } else {
+                                content.classList.remove('active');
+                            }
+                        });
+                    });
+                });
+            });
+
+
+            // ===== Logique "Sélectionner tout" =====
+            const selectAll = document.getElementById('select-all');
+            if(selectAll){
+                selectAll.addEventListener('change', function() {
+                    document.querySelectorAll('input[name="op_ids"]').forEach(cb => cb.checked = this.checked);
+                });
+            }
+
+            // Note: La fonctionnalité de "loadHistory" nécessiterait une API (Fetch/AJAX)
+            // pour être réellement fonctionnelle sans recharger la page.
+            // Pour l'instant, elle ne fait qu'afficher le tableau pré-chargé par Django.
+
         });
     </script>
+
 </body>
 </html>

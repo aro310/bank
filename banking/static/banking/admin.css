@@ -1,26 +1,233 @@
- /* Styles CSS existants... */
- body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; margin: 0; padding: 0; }
- .container { max-width: 1200px; margin: 20px auto; padding: 20px; }
- header { background: #1a3d7c; color: white; padding: 20px; text-align: center; border-radius: 10px; }
- .section { background: white; margin: 20px 0; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
- h2 { color: #1a3d7c; border-bottom: 2px solid #1a3d7c; padding-bottom: 10px; }
- table { width: 100%; border-collapse: collapse; margin-top: 10px; }
- th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
- th { background: #f0f3f7; }
- .btn { padding: 8px 16px; margin: 0 5px; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9em; }
- .btn-validate { background: #28a745; color: white; }
- .btn-refuse { background: #dc3545; color: white; }
- .btn-create { background: #007bff; color: white; }
- /* Nouveaux styles pour la gestion client */
- .btn-edit { background: #ffc107; color: #333; }
- .btn-delete { background: #dc3545; color: white; }
- .form-group { margin: 15px 0; }
- label { display: block; margin-bottom: 5px; font-weight: bold; }
- input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
- .message { padding: 10px; margin: 10px 0; border-radius: 5px; }
- .success { background: #d4edda; color: #155724; }
- .error { background: #f8d7da; color: #721c24; }
- .actions { display: flex; gap: 5px; }
- .no-data { text-align: center; color: #666; padding: 20px; }
- /* Style pour les soldes des clients */
- .client-solde { font-weight: bold; color: #1a3d7c; }
+/* ===== Couleurs et style général ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #ECF8F6 0%, #D6F2F0 100%);
+    overflow-x: hidden;
+    color: #18534F;
+}
+
+/* ===== Header ===== */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background-color: #18534F;
+    color: #ECF8F6;
+}
+
+.header-text { display: flex; flex-direction: column; }
+.header-text h2, .header-text h3 { margin: 0; }
+
+.header-right {
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+.header-logo {
+    width: 80px; height: 80px;
+    background-color: #226D68;
+    border-radius: 10px;
+}
+
+.client-balance {
+    background-color:#226D68;
+    color:#ECF8F6;
+    padding:10px 15px;
+    border-radius:8px;
+    font-weight:600;
+}
+
+/* ===== Nav ===== */
+nav {
+    background-color: #226D68;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    margin: 0;
+    padding: 15px 0;
+    gap: 20px;
+    align-items: center;
+}
+
+nav ul li a {
+    color: #ECF8F6;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    font-weight:600;
+    cursor: pointer;
+}
+nav ul li a:hover { background-color: #18534F; }
+.nav-arrow { transition: transform 0.5s; }
+nav ul li.open .nav-arrow { transform: rotate(180deg); }
+
+/* ===== Dropdown Sections ===== */
+.dropdown-section {
+    max-height: 0;
+    overflow: hidden;
+    background-color: #ECF8F6;
+    border-top: 2px solid #226D68;
+    padding: 0 20px;
+    transition: max-height 0.5s ease, padding 0.5s ease;
+}
+.dropdown-section.active { max-height: 1000px; padding: 20px; }
+
+/* ===== Formulaires et zones de saisie ===== */
+.operation-form, #historyContainer {
+    opacity: 0;
+    transform: translateY(-15px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.operation-form.show, #historyContainer.show { opacity: 1; transform: translateY(0); }
+
+.operation-form input, #historyContainer input {
+    padding: 8px 12px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1.5px solid #226D68;
+    width: calc(100% - 24px);
+    max-width: 300px;
+    display: inline-block;
+}
+
+/* ===== Boutons ===== */
+.operation-form button, #historyContainer button, .btn-logout, .btn-edit, .btn-delete, .btn-validate, .btn-refuse {
+    position: relative;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 5px rgba(34,109,104,0.3);
+    background-color: #226D68;
+    color: #ECF8F6;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.operation-form button:hover, #historyContainer button:hover, 
+.btn-logout:hover, .btn-edit:hover, .btn-delete:hover, .btn-validate:hover, .btn-refuse:hover {
+    background-color: #18534F;
+    box-shadow: 0 0 15px rgba(34,109,104,0.7);
+    transform: translateY(-2px);
+}
+
+/* Bouton quitter dans le header */
+.btn-logout {
+    display: inline-flex;
+    align-items: center;
+    font-size: 1rem;
+}
+.btn-logout svg { margin-left: 5px; width: 16px; height: 16px; fill: currentColor; transition: transform 0.3s ease; }
+.btn-logout:hover svg { transform: translateX(3px); }
+
+/* ===== Tables ===== */
+#historyTable, table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+#historyTable th, #historyTable td, table th, table td {
+    border: 1px solid #226D68;
+    padding: 8px;
+    text-align: center;
+}
+#historyTable th, table th { background-color: #18534F; color: #ECF8F6; }
+
+/* ===== Accueil fun ===== */
+.accueil-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 250px;
+    background: linear-gradient(135deg, #ECF8F6 0%, #E0F5F4 100%);
+    border-radius: 15px;
+    margin: 20px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(34,109,104,0.1);
+}
+
+/* ===== Particules de fond ===== */
+.accueil-section::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(34,109,104,0.05) 1%, transparent 1%);
+    background-size: 50px 50px;
+    top: -50%;
+    left: -50%;
+    animation: moveParticles 60s linear infinite;
+    z-index: 0;
+    pointer-events: none;
+}
+
+@keyframes moveParticles {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(50px, 50px); }
+}
+
+/* Cercles fun */
+.fun-circle {
+    position: absolute;
+    width: 120px; 
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(34,109,104,0.15);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 20px rgba(34,109,104,0.5), 0 0 40px rgba(34,109,104,0.3);
+    animation: funPulse 3s ease-in-out infinite, funRotate 20s linear infinite;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.circle-logo {
+    width: 70%;
+    height: 70%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* ===== Animations ===== */
+@keyframes funPulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+    50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.9; }
+}
+
+@keyframes funRotate {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* ===== Styles spécifiques aux boutons d'action ===== */
+.btn-edit { background-color: #226D68; }
+.btn-delete { background-color: #E94B35; }
+.btn-validate { background-color: #2E8B57; }
+.btn-refuse { background-color: #B22222; }
+.btn-edit:hover { background-color: #18534F; }
+.btn-delete:hover { background-color: #9C2F22; }
+.btn-validate:hover { background-color: #18534F; }
+.btn-refuse:hover { background-color: #800000; }
+
+/* ===== Styles pour "aucune donnée" ===== */
+.no-data { text-align: center; color: #555; font-style: italic; }

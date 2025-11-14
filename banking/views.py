@@ -16,6 +16,7 @@ from django.utils import timezone
 from decimal import Decimal
 from .models import Client, CompteBancaire, Operation
 from django.http import JsonResponse, Http404
+from .forms import ClientForm
 
 
 
@@ -39,30 +40,38 @@ def login_admin(request):
     return render(request, 'banking/login_admin.html')
 
 @staff_member_required(login_url='login_admin')
+@transaction.atomic
 def edit_client(request, client_id):
-    """Vue pour modifier un client."""
-    # TODO: Implémenter la logique de modification du client (via formulaire)
     client = get_object_or_404(Client, id=client_id)
-    messages.info(request, f"Page de modification pour {client.prenom} {client.nom} (ID: {client_id}).")
-    return redirect('admin_dashboard') # Rediriger temporairement vers le dashboard
+    if request.method == 'POST':
+        form = ClientForm(request.POST, instance=client)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Le client **{client.prenom} {client.nom}** a été mis à jour avec succès.")
+            return redirect('admin_dashboard')
+        else:
+            messages.error(request, "Erreur lors de la soumission du formulaire.")
+    else:
+        form = ClientForm(instance=client)
+    context = {
+        'form': form,
+        'client': client,
+    }
+    return render(request, 'banking/edit_client.html', context)
 
+
+# ------------------------------------------------------- DELETE client
 @staff_member_required(login_url='login_admin')
 @transaction.atomic
 def delete_client(request, client_id):
     """Vue pour supprimer un client et son compte."""
     if request.method == 'POST':
         client = get_object_or_404(Client, id=client_id)
-        user_id = client.user.id # Récupérer l'ID de l'utilisateur associé
-
-        # Suppression du client et des comptes (via la cascade de modèles)
+        user_id = client.user.id
         client_name = f"{client.prenom} {client.nom}"
         client.delete()
-        
-        # Supprimer l'utilisateur Django
         User.objects.filter(id=user_id).delete()
-        
         messages.success(request, f"Client {client_name} (ID: {client_id}) et son compte ont été supprimés.")
-    
     return redirect('admin_dashboard')
 
 # === DASHBOARD ADMIN ===
