@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Accueil - Phaser Game</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #000;
+    }
+
+    #background {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 70%;       /* 🔹 taille réduite à 70% */
+      height: auto;
+      opacity: 0.85;
+      z-index: -1;
+    }
+
+    #startBtn {
+      padding: 20px 50px;
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      font-size: 32px;
+      font-weight: bold;
+      border-radius: 15px;
+      border: 2px solid #fff;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    #startBtn:hover {
+      transform: scale(1.1);
+      background: rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Image réduite en fond -->
+  <img id="background" src="assets/nova.png" alt="Background">
+
+  <!-- Bouton START -->
+  <div id="startBtn" onclick="startGame()">START</div>
+
+  <script>
+    function startGame() {
+      window.location.href = "game.html";
+    }
+  </script>
+
+</body>
+</html>
