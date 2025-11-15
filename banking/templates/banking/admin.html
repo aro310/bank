@@ -473,13 +473,32 @@
         <div class="page-content">
 
             <section id="accueil" class="content-section active">
-                <div class="card welcome-card">
-                    <div class="card-body">
-                        <h2>Bonjour, {{ user.get_full_name|default:user.username }} !</h2>
-                        <p>Bienvenue sur le panneau d'administration de NovaBank. Sélectionnez une option dans le menu de gauche pour commencer.</p>
+            
+                            <div class="card welcome-card">
+                    <div class="card-body">
+                        <h2>Bonjour, {{ user.get_full_name|default:user.username }} !</h2>
+                        <p>Bienvenue sur le panneau d'administration de NovaBank. Sélectionnez une option dans le menu de gauche pour commencer.</p>
+                    </div>
+                </div>
+    
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Aperçu de l'activité</h4>
+                    </div>
+                    <div class="card-body" style="text-align: center;">
+                        {% if plot_base64 %}
+                            <img src="data:image/png;base64,{{ plot_base64 }}" 
+                                 alt="Graphique des dépôts et retraits" 
+                                 style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--color-border);">
+                        {% else %}
+                            <p class="no-data" style="padding: 20px;">
+                                Aucune donnée d'opération validée n'est disponible pour afficher le graphique.
+                            </p>
+                        {% endif %}
                     </div>
                 </div>
-            </section>
+    
+            </section>
 
             <section id="clients" class="content-section">
                 <div class="card">

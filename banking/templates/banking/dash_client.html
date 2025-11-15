@@ -39,7 +39,7 @@
             background-color: var(--color-bg);
             color: var(--color-text);
             display: flex;
-            flex-direction: column; /* Changé pour un layout vertical */
+            flex-direction: column;
             min-height: 100vh;
         }
 
@@ -173,14 +173,14 @@
             flex-grow: 1;
             max-width: 1200px;
             width: 100%;
-            margin: 0 auto; /* Centre le contenu */
+            margin: 0 auto;
         }
 
         .content-section {
-            display: none; /* Caché par défaut */
+            display: none;
         }
         .content-section.active {
-            display: block; /* Affiché par JS */
+            display: block;
             animation: fadeIn 0.5s ease;
         }
         @keyframes fadeIn {
@@ -188,14 +188,14 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ===== Cartes (Card) ===== */
+        /* ===== Cartes (Card) & Styles existants (Conservés) ===== */
         .card {
             background-color: var(--color-bg-alt);
             border-radius: 12px;
             border: 1px solid var(--color-border);
             box-shadow: 0 4px 12px rgba(0,0,0,0.03);
             margin-bottom: 25px;
-            overflow: hidden; /* Pour les tab-nav */
+            overflow: hidden;
         }
         .card-header {
             padding: 20px 25px;
@@ -209,98 +209,7 @@
             padding: 25px;
         }
 
-        /* ===== Tabs (pour Dépôt/Retrait) ===== */
-        .tab-nav {
-            display: flex;
-            background-color: var(--color-bg);
-            border-bottom: 1px solid var(--color-border);
-        }
-        .tab-link {
-            flex: 1;
-            padding: 18px 20px;
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--color-text-light);
-            border: none;
-            background: none;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-        .tab-link:hover {
-            color: var(--color-primary);
-        }
-        .tab-link.active {
-            color: var(--color-primary);
-            font-weight: 600;
-            background-color: var(--color-bg-alt);
-        }
-        
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        /* ===== Formulaires ===== */
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-        .form-group input[type="number"],
-        .form-group select {
-            width: 100%;
-            padding: 12px 14px;
-            border-radius: 8px;
-            border: 1.5px solid var(--color-border);
-            font-size: 1rem;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px rgba(24, 83, 79, 0.15);
-        }
-        /* Style pour le select */
-        .form-group select {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 0.7rem center;
-            background-repeat: no-repeat;
-            background-size: 1.2em 1.2em;
-            padding-right: 2.5rem;
-        }
-
-        /* ===== Boutons ===== */
-        .btn {
-            transition: all 0.3s ease;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 1rem;
-            width: 100%; /* Boutons pleine largeur */
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        .btn-primary {
-            background-color: var(--color-primary);
-            color: var(--color-text-inverted);
-        }
-        .btn-primary:hover {
-            background-color: var(--color-primary-dark);
-        }
-
-        /* ===== Tables ===== */
+        /* Styles spécifiques au tableau */
         .table-responsive { overflow-x: auto; }
         table {
             width: 100%;
@@ -329,41 +238,113 @@
             font-style: italic;
             padding: 20px;
         }
-        
-        /* ===== Messages Django ===== */
-        .messages-container {
-            list-style: none;
-            margin-bottom: 20px;
-        }
-        .message {
-            padding: 15px 20px;
-            border-radius: 8px;
-            font-weight: 500;
-            margin-bottom: 10px;
-            border: 1px solid transparent;
-        }
-        /* Tags de message Django */
-        .message.success {
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-            color: #155724;
-        }
-        .message.error {
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-            color: #721c24;
-        }
-        .message.warning {
-            background-color: #fff3cd;
-            border-color: #ffeeba;
-            color: #856404;
-        }
-        .message.info {
-            background-color: #d1ecf1;
-            border-color: #bee5eb;
-            color: #0c5460;
-        }
 
+        /* Styles de formulaire et messages (Conservés) */
+        .tab-nav { display: flex; background-color: var(--color-bg); border-bottom: 1px solid var(--color-border); }
+        .tab-link { flex: 1; padding: 18px 20px; font-size: 1rem; font-weight: 500; color: var(--color-text-light); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease; text-align: center; }
+        .tab-link:hover { color: var(--color-primary); }
+        .tab-link.active { color: var(--color-primary); font-weight: 600; background-color: var(--color-bg-alt); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+        .form-group label { font-weight: 500; font-size: 0.9rem; }
+        .form-group input[type="number"], .form-group select { width: 100%; padding: 12px 14px; border-radius: 8px; border: 1.5px solid var(--color-border); font-size: 1rem; transition: border-color 0.3s ease, box-shadow 0.3s ease; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(24, 83, 79, 0.15); }
+        .form-group select { appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.7rem center; background-repeat: no-repeat; background-size: 1.2em 1.2em; padding-right: 2.5rem; }
+        .btn { transition: all 0.3s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: none; padding: 12px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 1rem; width: 100%; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn-primary { background-color: var(--color-primary); color: var(--color-text-inverted); }
+        .btn-primary:hover { background-color: var(--color-primary-dark); }
+        .messages-container { list-style: none; margin-bottom: 20px; }
+        .message { padding: 15px 20px; border-radius: 8px; font-weight: 500; margin-bottom: 10px; border: 1px solid transparent; }
+        .message.success { background-color: #d4edda; border-color: #c3e6cb; color: #155724; }
+        .message.error { background-color: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+        .message.warning { background-color: #fff3cd; border-color: #ffeeba; color: #856404; }
+        .message.info { background-color: #d1ecf1; border-color: #bee5eb; color: #0c5460; }
+        .map{
+    overflow: hidden;
+} /*donner une bonne hauteur au carte*/
+
+.map__image{
+    width: 50%;
+    float: left;
+}
+
+.map__image path{
+    fill: rgb(159, 95, 36);
+    stroke: rgb(255, 255, 255);
+    stroke-width: 2px;
+    transition: fill 0.3s;
+}
+
+/*.map__image path:hover{
+    fill: rgb(73, 104, 24);
+}*/
+
+.map__image .is-active path{
+    fill: rgb(104, 24, 24);
+}
+
+.map__image .novabank-region path {
+    fill: #2E8B57; /* Green color for specified regions */
+}
+
+.map__list{
+    float: right;
+    width: 50%;
+    padding: 20px;
+    min-height: 500px; /* Adjust as needed */
+}
+
+.map__list #region-info {
+    text-align: left;
+}
+
+.map__list #region-info h4 {
+    margin-bottom: 10px;
+    color: var(--color-primary);
+}
+
+.map__list #region-info p {
+    margin-bottom: 5px;
+}
+
+.titre{
+    text-align: center;
+    
+}
+
+.services {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.service-card {
+    background-color: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.service-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.service-card h4 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: var(--color-primary);
+}
+
+.service-text {
+    display: none;
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+}
     </style>
 </head>
 <body>
@@ -391,8 +372,9 @@
 
     <nav class="main-nav">
         <ul>
-            <li><a href="{% url 'acceuil' %}" class="nav-link active" data-target="accueil">Accueil & Historique</a></li>
-            <li><a href="#" class="nav-link" data-target="operations">Effectuer une Opération</a></li>
+            <li><a href="#" class="nav-link active" data-target="accueil">Accueil</a></li>
+            <li><a href="#" class="nav-link" data-target="historique">Historique</a></li>
+            <li><a href="#" class="nav-link" data-target="operations">Opérations</a></li>
         </ul>
     </nav>
 
@@ -408,10 +390,117 @@
 
         <section id="accueil" class="content-section active">
             <div class="card">
+                <div class="card-body">
+                    <h3 style="color: var(--color-primary-light);" class="titre">Nos Services</h3>
+                    <div class="services">
+                        <div class="service-card" onclick="toggleText('diaspora')">
+                            <h4>DIASPORA</h4>
+                            <div id="diaspora" class="service-text">
+                                <p>Services adaptés pour la diaspora malgache : transferts d'argent rapides, comptes multidevises et conseils personnalisés pour vos besoins à l'étranger.</p>
+                            </div>
+                        </div>
+                        <div class="service-card" onclick="toggleText('epargne')">
+                            <h4>COMPTES ÉPARGNE</h4>
+                            <div id="epargne" class="service-text">
+                                <p>Ouvrez un compte épargne avec des taux d'intérêt attractifs et des options flexibles pour faire fructifier votre argent en toute sécurité.</p>
+                            </div>
+                        </div>
+                        <div class="service-card" onclick="toggleText('prets')">
+                            <h4>PRÊTS</h4>
+                            <div id="prets" class="service-text">
+                                <p>Bénéficiez de prêts adaptés à vos projets : immobilier, automobile ou personnel, avec des conditions avantageuses et un accompagnement dédié.</p>
+                            </div>
+                        </div>
+                        <div class="service-card" onclick="toggleText('cartes')">
+                            <h4>CARTES BANCAIRES</h4>
+                            <div id="cartes" class="service-text">
+                                <p>Choisissez parmi notre gamme de cartes de crédit et de débit pour des paiements sécurisés et des avantages exclusifs au quotidien.</p>
+                            </div>
+                        </div>
+                        <div class="service-card" onclick="toggleText('mobile')">
+                            <h4>BANKING MOBILE</h4>
+                            <div id="mobile" class="service-text">
+                                <p>Gérez vos finances où que vous soyez avec notre application mobile intuitive : virements, consultations de solde et plus encore.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h3 style="color: var(--color-primary-light);" class="titre">Où sont nos sièges?</h3>
+                    
+                    <div class="map" id="map">
+                        <div class="map__image">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:amcharts="http://amcharts.com/ammap" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 2000 1600">
+                                <g>
+                                    <a xlink:href="http://google.com?q=FI-VF" id="region-FI-VF" xlink:title="Vatovavy-Fitovinany"><path   class="land" d="M592.93,970.91L543.45,947.72L534.24,973.04L501.16,974.56L482.84,987.22L464.95,1037.28L451.18,1161.58L422.27,1177.92L512.3,1227.93L592.93,970.91z"/>
+                                    </a>
+                                    <a xlink:href="http://google.com?q=AV-VA" id="region-AV-VA" xlink:title="Vakinankaratra"><path   class="land" d="M511.51,874.37L477.34,853.91L480.09,823.28L467.7,823.28L452.56,842.23L405.75,832.03L368.58,853.91L323.15,856.83L284.28,857.8L281.68,908.04L323.31,931.54L331.32,923.33L338.83,945.85L365.22,953.41L401.06,952.07L442.67,927.57L494.2,930.55L508.71,897.86L511.51,874.37z"/>
+                                    </a>
+                                    <a xlink:href="http://google.com?q=MA-SF" id="region-MA-SF" xlink:title="Sofia"><path   class="land" d="M645.75,254.06L631.89,248.16L616.07,259.72L582.6,240.24L566.57,245.51L545.15,233.49L552.35,216.62L528.62,239.11L524.8,268.81L516.43,241.65L519,258.26L502.23,257.2L492.41,282.51L498.06,300.01L503.66,293.77L517.08,296.15L526.64,303.37L527.06,315.52L521.76,302.47L516.49,312.42L502.92,296.13L462.32,357.66L472.14,324.9L464.2,308.08L421.46,367.45L441.18,392.73L431.54,396.26L436.04,460.75L452.56,493.71L516.07,518.4L522.66,488.48L557.05,487.04L593.96,512.86L600.6,546.51L625.96,537.18L659.18,487.35L635.6,472.11L648.44,397.83L636.89,386.55L674.73,372.95L685.99,341.01L699.49,338.72L678.38,287.84L645.75,254.06z"/>
+                                    </a>
+                                    <a xlink:href="http://google.com?q=AS-SV" id="region-AS-SV" xlink:title="Sava"><path   class="land" d="M759.12,450.27L770.28,456.14L782,437.89L799.75,374.11L768.04,317.07L760.69,207.36L738.63,122.71L704.94,82.22L678.33,112.36L687.96,122.25L674.2,159.01L681.08,181.66L671.44,222.76L645.75,254.06L678.38,287.84L699.49,338.72L749.2,365.09L759.12,450.27z"/>
+                                    </a>
+                                    <a xlink:href="http://google.com?q=TL-ME" id="region-TL-ME" xlink:title="Menabe"><path   class="land" d="M258.7,722.57L199.63,711.31L175.45,732.44L207.33,833.4L176.79,841.05L115.51,822.16L138.37,861.51L126.4,895.35L137.72,920.15L74.83,1025.3L65.07,1065.5L35.34,1075.54L75.4,1141.73L121.97,1140.32L151.87,1130.06L167.59,1071.22L202,1081.57L258.45,1035.8L282.4,1030.73L281.68,908.04L284.28,857.8L284.36,832.16L250.73,796.58L264.63,752.05L258.7,722.57z"/>
+                                    </a>
+                                    <a xlink:href="http://google.com?q=MA-ME" id="region-MA-ME" xlink:title="Melaky"><path   class="land" d="M182.11,483.38L134.51,481.84L132.97,539.66L78.24,629.87L115.51,822.16L176.79,841.05L207.33,833.4L175.45,732.44L199.63,711.31L258.7,722.57L284.34,716.13L302.13,667.43L291.49,623.18L259.82,623.18L250.19,571.3L197.87,519.55L182.11,483.38z"/>
+                                    </a>
+                                    <a class="novabank-region" xlink:href="http://google.com?q=AV-IT" id="region-AV-IT" xlink:title="NovaBank - Adresse: Lot II J 45, Arivonimamo, Itasy; Téléphone: +261 38 66 885 95"><path   class="land" d="M429.67,774.59L378.22,772.34L323.15,856.83L368.58,853.91L405.75,832.03L452.56,842.23L467.7,823.28L448.97,781.03L429.67,774.59z"/>
+                                    </a>
+                                    <a xlink:href="http://google.com?q=FI-HO" id="region-FI-HO" xlink:title="Ihorombe"><path   class="land" d="M414.01,1189.82L364.45,1182.38L349.31,1146.73L330.03,1136.35L252.13,1117.74L221.01,1146.43L230.46,1174.52L196.22,1260.91L205.29,1281.43L234.95,1289.91L241.17,1259.44L304.93,1238.43L356.85,1298.16L358.83,1354.49L397.49,1349.78L396.11,1276.33L437.41,1288.3L414.01,1189.82z"/>
+                                    </a>
+                                    <a xlink:href="http://google.com?q=FI-HM" id="region-FI-HM" xlink:title="Haute Matsiatra"><path   class="land" d="M464.95,1037.28L438.79,1025.49L398.87,1044.65L369.96,1009.29L352.06,1009.29L281,1043.21L252.13,1117.74L330.03,1136.35L349.31,1146.73L364.45,1182.38L414.01,1189.82L422.27,1177.92L451.18,1161.58L464.95,1037.28z"/>
+                                    </a>
+                                    <a xlink:href="http://google.com?q=AS-DI" id="region-AS-DI" xlink:title="Diana"><path   class="land" d="M560.78,147.32L545.95,148.71L549.89,164.1L565.45,164.12L560.78,147.32zM663.67,0L629.14,60.3L605.43,55.24L630.19,97.67L610.94,162.22L591.69,169.18L578.21,159.58L583.91,177.69L561.84,180.58L554.92,209.87L532.72,177.3L514.69,187.01L513.26,214.89L528.62,239.11L552.35,216.62L545.15,233.49L566.57,245.51L582.6,240.24L616.07,259.72L631.89,248.16L645.75,254.06L671.44,222.76L681.08,181.66L674.2,159.01L687.96,122.25L678.33,112.36L704.94,82.22L694.37,48.85L660.34,31.3L664.09,22.09L676.09,28.61L663.67,0z"/>
+                                    </a>
+                                    <a xlink:href="http://google.com?q=AV-BO" id="region-AV-BO" xlink:title="Bongolava"><path   class="land" d="M370.35,659.82L324.76,675.65L302.13,667.43L284.34,716.13L258.7,722.57L264.63,752.05L250.73,796.58L284.36,832.16L284.28,857.8L323.15,856.83L378.22,772.34L429.67,774.59L383.47,704.81L370.35,659.82z"/>
+                                    </a>
+                                    <a xlink:href="http://google.com?q=MA-BO" id="region-MA-BO" xlink:title="Boeny"><path   class="land" d="M431.54,396.26L410.73,408.02L423.53,382.3L409.77,368L341.99,417.21L338.28,438.4L356.94,454.51L341.81,456.85L321.28,425.61L307.16,435.72L312.69,443.68L268.16,437.04L262.8,465.12L258.18,452.95L237.23,456.46L228.27,472.26L224.81,450.76L182.11,483.38L197.87,519.55L250.19,571.3L306.63,572.74L331.41,601.55L369.96,568.42L382.85,529.23L449.8,536.78L436.04,512.37L452.56,493.71L436.04,460.75L431.54,396.26z"/>
+                                    </a>
+                                    <a xlink:href="http://google.com?q=MA-BE" id="region-MA-BE" xlink:title="Betsiboka"><path   class="land" d="M516.07,518.4L452.56,493.71L436.04,512.37L449.8,536.78L382.85,529.23L369.96,568.42L331.41,601.55L306.63,572.74L250.19,571.3L259.82,623.18L291.49,623.18L302.13,667.43L324.76,675.65L370.35,659.82L403.35,657.25L420.32,672.2L447.84,660.84L482.42,683.21L514.53,677.77L547.64,592.88L516.07,518.4z"/>
+                                    </a>
+                                    <a class="novabank-region" xlink:href="http://google.com?q=TM-AI" id="region-TM-AI" xlink:title="NovaBank - Adresse: Boulevard Ratsimilaho, Toamasina, Atsinanana; Téléphone: +261 38 54 825 77"><path   class="land" d="M592.93,970.91L683.54,707.12L687.3,633.18L671.44,634.73L667.31,652.06L621.88,660.73L597.1,675.19L615,707.04L587.47,718.63L583.34,734.58L598.48,823.28L568.2,849.53L558.56,897.75L532.4,888.97L508.71,897.86L494.2,930.55L490.4,963.23L501.16,974.56L534.24,973.04L543.45,947.72L592.93,970.91z"/>
+                                    </a>
+                                    <a class="novabank-region" xlink:href="http://google.com?q=FI-AA" id="region-FI-AA" xlink:title="NovaBank - Adresse: Rue Principale, Farafangana, Atsimo-Atsinanana; Téléphone: +261 38 22 567 88"><path   class="land" d="M512.3,1227.93L422.27,1177.92L414.01,1189.82L437.41,1288.3L396.11,1276.33L397.49,1349.78L358.83,1354.49L351.19,1373.26L400.2,1410.25L404.56,1430.05L428.75,1393.84L462.36,1410.98L512.3,1227.93z"/>
+                                    </a>
+                                    <a xlink:href="http://google.com?q=TL-AF" id="region-TL-AF" xlink:title="Atsimo-Andrefana"><path   class="land" d="M281,1043.21L282.4,1030.73L258.45,1035.8L202,1081.57L167.59,1071.22L151.87,1130.06L121.97,1140.32L75.4,1141.73L35.34,1075.54L0.25,1187.41L15.45,1257.42L59.41,1331.6L44.41,1367.35L49.7,1436.3L76.67,1470.61L88.81,1516.6L130.15,1539.56L118.22,1535.35L126.25,1547.9L165.62,1553.59L205.45,1503L220.59,1395.63L248.12,1382.07L246.75,1345.98L226.1,1347.48L234.95,1289.91L205.29,1281.43L196.22,1260.91L230.46,1174.52L221.01,1146.43L252.13,1117.74L281,1043.21z"/>
+                                    </a>
+                                    <a xlink:href="http://google.com?q=TL-AY" id="region-TL-AY" xlink:title="Anosy"><path   class="land" d="M358.83,1354.49L356.85,1298.16L304.93,1238.43L241.17,1259.44L234.95,1289.91L226.1,1347.48L246.75,1345.98L248.12,1382.07L252.48,1397.07L288.73,1408.49L299.75,1511.39L331.54,1540.78L390.02,1535.35L429.18,1508.77L462.36,1410.98L428.75,1393.84L404.56,1430.05L400.2,1410.25L351.19,1373.26L358.83,1354.49z"/>
+                                    </a>
+                                    <a xlink:href="http://google.com?q=TL-AD" id="region-TL-AD" xlink:title="Androy"><path   class="land" d="M213.41,1589.49L257.21,1584.79L331.54,1540.78L299.75,1511.39L288.73,1408.49L252.48,1397.07L248.12,1382.07L220.59,1395.63L205.45,1503L165.62,1553.59L213.41,1589.49z"/>
+                                    </a>
+                                    <a xlink:href="http://google.com?q=TM-AN" id="region-TM-AN" xlink:title="Analanjirofo"><path   class="land" d="M699.49,338.72L685.99,341.01L674.73,372.95L636.89,386.55L648.44,397.83L635.6,472.11L659.18,487.35L625.96,537.18L620.8,617.11L605.36,639.06L621.88,660.73L667.31,652.06L671.44,634.73L687.3,633.18L682.5,606.71L700.56,563.96L727.45,554.26L714.76,545.82L729.95,510.33L728.04,483.72L710.17,465.59L713.98,396.29L734.13,393.51L759.12,450.27L749.2,365.09L699.49,338.72z"/>
+                                    </a>
+                                    <a class="novabank-region" xlink:href="http://google.com?q=AV-AG" id="region-AV-AG" xlink:title="NovaBank - Adresse: Lot VK 28, Antananarivo, Analamanga; Téléphone: +261 38 95 888 75"><path   class="land" d="M514.53,677.77L482.42,683.21L447.84,660.84L420.32,672.2L403.35,657.25L370.35,659.82L383.47,704.81L429.67,774.59L448.97,781.03L467.7,823.28L480.09,823.28L477.34,853.91L511.51,874.37L528.91,730.52L514.53,677.77z"/>
+                                    </a>
+                                    <a xlink:href="http://google.com?q=FI-AM" id="region-FI-AM" xlink:title="Amoron'i Mania"><path   class="land" d="M494.2,930.55L442.67,927.57L401.06,952.07L365.22,953.41L338.83,945.85L331.32,923.33L323.31,931.54L281.68,908.04L282.4,1030.73L281,1043.21L352.06,1009.29L369.96,1009.29L398.87,1044.65L438.79,1025.49L464.95,1037.28L482.84,987.22L501.16,974.56L490.4,963.23L494.2,930.55z"/>
+                                    </a>
+                                    <a xlink:href="http://google.com?q=TM-AO" id="region-TM-AO" xlink:title="Alaotra-Mangoro"><path   class="land" d="M625.96,537.18L600.6,546.51L593.96,512.86L557.05,487.04L522.66,488.48L516.07,518.4L547.64,592.88L514.53,677.77L528.91,730.52L511.51,874.37L508.71,897.86L532.4,888.97L558.56,897.75L568.2,849.53L598.48,823.28L583.34,734.58L587.47,718.63L615,707.04L597.1,675.19L621.88,660.73L605.36,639.06L620.8,617.11L625.96,537.18z"/>
+                                    </a>
+                                </g>
+                            </svg>
+                            
+                        </div>
+                        <div class="map__list">
+                            <div id="region-info">
+                                <p>Survolez la carte pour retrouver plus facilement les agences NOVABANK les plus proches de chez vous.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="historique" class="content-section">
+            <div class="card">
                 <div class="card-header">
                     <h4>Historique des Opérations</h4>
                 </div>
-                <div class="card-body" style="padding: 0;"> <div class="table-responsive">
+                <div class="card-body" style="padding: 0;">
+                    <div class="table-responsive">
                         <table id="historyTable">
                             <thead>
                                 <tr>
@@ -494,62 +583,33 @@
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         
-        // ===== Gestion de la Navigation Principale =====
+        // ===== Gestion de la Navigation Principale (Accueil / Historique / Opérations) =====
         const navLinks = document.querySelectorAll('.main-nav .nav-link');
         const contentSections = document.querySelectorAll('.page-content .content-section');
 
         navLinks.forEach(link => {
-            // Ne pas attacher d'événement si le lien est une vraie URL (comme Accueil)
-            // Sauf si on veut un effet SPA, ce qu'on fait ici
-            if (link.getAttribute('href') === '#') {
-                link.addEventListener('click', function(e) {
+            link.addEventListener('click', function(e) {
+                // On empêche le rechargement si le lien ne pointe pas vers une vraie URL
+                if (this.getAttribute('href') === '#') {
                     e.preventDefault();
-                    
-                    const targetId = this.getAttribute('data-target');
-                    const targetSection = document.getElementById(targetId);
+                }
 
-                    // Gérer l'état actif du lien
-                    navLinks.forEach(nav => nav.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // Activer le lien "Accueil" si on clique sur opérations
-                    if (targetId === 'operations') {
-                        document.querySelector('.nav-link[data-target="accueil"]').classList.remove('active');
-                    } else {
-                        document.querySelector('.nav-link[data-target="operations"]').classList.remove('active');
-                    }
-                    this.classList.add('active');
+                const targetId = this.getAttribute('data-target');
+                const targetSection = document.getElementById(targetId);
 
+                // Gérer l'état actif du lien
+                navLinks.forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
 
-                    // Gérer l'affichage de la section
-                    contentSections.forEach(section => section.classList.remove('active'));
-                    if (targetSection) {
-                        targetSection.classList.add('active');
-                    }
-                });
-            }
-
-            // Gérer le cas où l'utilisateur clique sur le lien "Accueil"
-            const accueilLink = document.querySelector('.nav-link[data-target="accueil"]');
-            if (accueilLink) {
-                 accueilLink.addEventListener('click', function(e) {
-                    // Si c'est le lien d'accueil, on veut peut-être juste rafraîchir
-                    // ou s'assurer que l'état est correct
-                    if (this.getAttribute('href') !== '#') {
-                        return; // Laisse le lien recharger la page
-                    }
-                    
-                    e.preventDefault();
-                    navLinks.forEach(nav => nav.classList.remove('active'));
-                    this.classList.add('active');
-
-                    contentSections.forEach(section => section.classList.remove('active'));
-                    document.getElementById('accueil').classList.add('active');
-                });
-            }
+                // Gérer l'affichage de la section
+                contentSections.forEach(section => section.classList.remove('active'));
+                if (targetSection) {
+                    targetSection.classList.add('active');
+                }
+            });
         });
 
-        // ===== Gestion des Onglets (Tabs) pour les Opérations =====
+        // ===== Gestion des Onglets (Tabs) pour les Opérations (Dépôt / Retrait) =====
         const operationsCard = document.querySelector('#operations .card');
         if (operationsCard) {
             const tabLinks = operationsCard.querySelectorAll('.tab-nav .tab-link');
@@ -576,6 +636,90 @@
             });
         }
     });
+    </script>
+
+    <script>
+        let map = document.querySelector('#map')
+let paths = map.querySelectorAll('.map__image a')
+
+let active = function (id){
+    map.querySelectorAll('.is-active').forEach(function(item){
+        item.classList.remove('is-active')
+    }) 
+
+    if (id !==undefined){
+        document.querySelector('#region-' + id).classList.add('is-active')
+    }
+}
+
+paths.forEach(function(path) {
+    path.addEventListener('mouseenter', function(){
+        let id = this.id.replace('region-','') //enlever region en remplacant par rien
+
+        active(id)
+    })
+
+    path.addEventListener('click', function(e){
+        e.preventDefault();
+        let title = this.getAttribute('xlink:title');
+        let infoDiv = document.getElementById('region-info');
+        infoDiv.innerHTML = '';
+
+        if (typeof title === 'string' && title.startsWith('NovaBank')) {
+  const parts = title.split(';').map(p => p.trim());
+  const bankName = parts[0] || '';
+  let adresse = '';
+  let telephone = '';
+
+  for (const part of parts.slice(1)) {
+    if (/^\s*Adresse\s*:/i.test(part)) adresse = part.replace(/^\s*Adresse\s*:\s*/i, '');
+    else if (/^\s*Téléphone\s*:/i.test(part)) telephone = part.replace(/^\s*Téléphone\s*:\s*/i, '');
+    else {
+      if (/^\+?[\d\s().-]{6,}$/.test(part)) telephone = telephone ? telephone + '; ' + part : part;
+      else adresse = adresse ? adresse + '; ' + part : part;
+    }
+  }
+
+  // s'assurer que infoDiv existe
+  infoDiv.innerHTML = '';
+  const h4 = document.createElement('h4');
+  h4.textContent = bankName;
+
+  const pAdr = document.createElement('p');
+  const strongAdr = document.createElement('strong');
+  pAdr.appendChild(strongAdr);
+  pAdr.append(' ' + adresse);
+
+  const pTel = document.createElement('p');
+  const strongTel = document.createElement('strong');
+  strongTel.textContent = 'Téléphone:';
+  pTel.appendChild(strongTel);
+  pTel.append(' ' + telephone);
+
+  infoDiv.append(h4, pAdr, pTel);
+}
+ else {
+            infoDiv.innerHTML = '<p>Cette région n\'a pas de siège NovaBank.</p>';
+        }
+    });
+})
+
+map.addEventListener('mouseleave', function(){
+    active()
+})/*pour enlever le active lorsqu'on quitte l'interface
+
+    NB: mouseleave== miala amle interface iraymanontolo
+        mouseover== miala ao amle element
+*/
+    </script>
+
+    <script>
+        function toggleText(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.style.display = element.style.display === 'none' || element.style.display === '' ? 'block' : 'none';
+            }
+        }
     </script>
 
 </body>

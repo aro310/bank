@@ -18,6 +18,13 @@ from .models import Client, CompteBancaire, Operation
 from django.http import JsonResponse, Http404
 from .forms import ClientForm
 
+import matplotlib.pyplot as plt
+import pandas as pd
+import io
+import base64
+from django.db.models import Sum
+from django.db.models.functions import TruncDay
+from .models import Operation, Client, CompteBancaire
 
 
 # === LOGIN ADMIN ===
@@ -143,16 +150,85 @@ def admin_dashboard(request):
     # Données
     pending_ops = Operation.objects.filter(statut='ATT').select_related('compte', 'compte__client').order_by('-date_heure')
     recent_ops = Operation.objects.filter(statut='VAL').select_related('compte', 'compte__client').order_by('-date_validation')[:10]
-    
-    # --- AJOUTER LA LISTE DES CLIENTS ---
     clients_list = Client.objects.all().select_related('user').prefetch_related('comptes')
 
+    # --- 1. Agrégation des données pour le graphique ---
+    # On prend toutes les opérations validées
+    daily_summary = Operation.objects.filter(
+        statut='VAL'
+    ).annotate(
+        # On tronque la date_validation au jour près
+        date=TruncDay('date_validation')
+    ).values(
+        'date', 'type_operation' # On groupe par jour et type
+    ).annotate(
+        total_montant=Sum('montant') # On somme les montants
+    ).order_by('date')
 
-    return render(request, 'banking/admin.html', {
+    # --- 2. Génération du graphique Matplotlib ---
+    plot_base64 = None
+    if daily_summary:
+        try:
+            # Conversion en DataFrame Pandas pour un pivot facile
+            df = pd.DataFrame(list(daily_summary))
+            
+            # Convertir les montants (Decimal) en float pour Matplotlib
+            df['total_montant'] = df['total_montant'].astype(float)
+
+            # Pivoter les données : Date en index, Type en colonnes
+            df_pivot = df.pivot_table(
+                index='date', 
+                columns='type_operation', 
+                values='total_montant', 
+                fill_value=0
+            )
+            
+            # Assurer que les colonnes DEP et RET existent
+            if 'DEP' not in df_pivot:
+                df_pivot['DEP'] = 0
+            if 'RET' not in df_pivot:
+                df_pivot['RET'] = 0
+
+            # Création du graphique
+            fig, ax = plt.subplots(figsize=(10, 4))
+            
+            # Utilisation de plot() pour des lignes
+            ax.plot(df_pivot.index, df_pivot['DEP'], label='Dépôts', color='#2E8B57', marker='o')
+            ax.plot(df_pivot.index, df_pivot['RET'], label='Retraits', color='#D9534F', marker='x')
+
+            ax.set_title('Activité Quotidienne (Dépôts vs Retraits Validés)')
+            ax.set_xlabel('Date')
+            ax.set_ylabel('Montant (MGA)')
+            ax.legend()
+            ax.grid(True, linestyle='--', alpha=0.6)
+            
+            # Formater les dates sur l'axe X
+            fig.autofmt_xdate()
+            plt.tight_layout()
+
+            # --- 3. Encodage en Base64 ---
+            buffer = io.BytesIO()
+            plt.savefig(buffer, format='png', bbox_inches='tight')
+            buffer.seek(0)
+            image_png = buffer.getvalue()
+            buffer.close()
+            plt.close(fig) # Fermer la figure pour libérer la mémoire
+
+            plot_base64 = base64.b64encode(image_png).decode('utf-8')
+
+        except Exception as e:
+            print(f"Erreur lors de la génération du graphique : {e}")
+            # plot_base64 reste None
+
+    # Contexte final incluant le graphique
+    context = {
         'pending_operations': pending_ops,
         'recent_operations': recent_ops,
-        'clients': clients_list,  # NOUVEAU CONTEXTE
-    })
+        'clients': clients_list,
+        'plot_base64': plot_base64, # Ajout du graphique encodé
+    }
+
+    return render(request, 'banking/admin.html', context)
 
 # Fonctions utilitaires
 def _validate_operations(ops, request):
