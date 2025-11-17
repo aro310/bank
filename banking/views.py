@@ -41,13 +41,24 @@ def login_admin(request):
         if user is not None:
             if user.is_staff:  # Obligatoire pour admin
                 login(request, user)
-                messages.success(request, f"Bienvenue, {user.get_full_name() or user.username} !")
-                return redirect('admin_dashboard')
+                success_msg = f"Bienvenue, {user.get_full_name() or user.username} !"
+                if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # Check if AJAX
+                    return JsonResponse({'success': True, 'message': success_msg})
+                else:
+                    messages.success(request, success_msg)
+                    return redirect('admin_dashboard')
             else:
-                messages.error(request, "Accès refusé : vous n'êtes pas administrateur.")
+                error_msg = "Accès refusé : vous n'êtes pas administrateur."
         else:
-            messages.error(request, "Nom d'utilisateur ou mot de passe incorrect.")
+            error_msg = "Nom d'utilisateur ou mot de passe incorrect."
 
+        # Handle errors
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'message': error_msg})
+        else:
+            messages.error(request, error_msg)
+            return render(request, 'banking/login_admin.html')
+    
     return render(request, 'banking/login_admin.html')
 
 @staff_member_required(login_url='login_admin')
@@ -265,6 +276,10 @@ def money_bag(request):
 def acceuil(request):
     return render(request, 'banking/acceuil.html')
 
+# views.py (updated)
+
+from django.http import JsonResponse
+
 def login_client(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -284,15 +299,25 @@ def login_client(request):
                 # 3. Vérifier que le numéro de compte correspond
                 if client.comptes.filter(num_compte=num_compte).exists():
                     login(request, user)
-                    messages.success(request, f"Connexion réussie ! Bienvenue {client.prenom}.")
-                    return redirect('dash_client')
+                    if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # Check if AJAX
+                        return JsonResponse({'success': True, 'message': f"Connexion réussie ! Bienvenue {client.prenom}."})
+                    else:
+                        messages.success(request, f"Connexion réussie ! Bienvenue {client.prenom}.")
+                        return redirect('dash_client')
                 else:
-                    messages.error(request, "Numéro de compte incorrect.")
+                    error_msg = "Numéro de compte incorrect."
             else:
-                messages.error(request, "Email ou mot de passe incorrect.")
+                error_msg = "Email ou mot de passe incorrect."
                 
         except Client.DoesNotExist:
-            messages.error(request, "Aucun client trouvé avec cet email.")
+            error_msg = "Aucun client trouvé avec cet email."
+        
+        # Handle errors
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'message': error_msg})
+        else:
+            messages.error(request, error_msg)
+            return render(request, 'banking/login_client.html')
     
     return render(request, 'banking/login_client.html')
 

@@ -1,41 +1,227 @@
+<!-- login_admin.html (updated) -->
+
 {% extends 'banking/base.html' %}
 {% load static %}
 {% block title %}Login-Administrateur{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'banking/login_admin.css' %}">{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'banking/login_admin.css' %}">
+
+<!-- Add CSS for loading animation -->
+<style>
+/* --- Overlay néon NovaBank --- */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center,
+        rgba(24, 83, 79, 0.95),
+        rgba(10, 35, 33, 0.95)
+    );
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 99999;
+    backdrop-filter: blur(6px);
+}
+
+/* --- Spinner effet néon --- */
+.spinner {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    position: relative;
+    box-shadow: 0 0 20px #1B8A7F, inset 0 0 30px #226D68;
+    animation: pulseRing 2s infinite ease-in-out;
+}
+
+.spinner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 6px solid transparent;
+    border-top-color: #29e3c1;
+    border-right-color: #29e3c1;
+    filter: drop-shadow(0 0 8px #29e3c1);
+    animation: spin 1.3s linear infinite;
+}
+
+.spinner::after {
+    content: "";
+    position: absolute;
+    width: 140%;
+    height: 140%;
+    top: -20%;
+    left: -20%;
+    border-radius: 50%;
+    border: 2px solid rgba(41, 227, 193, 0.2);
+    animation: wave 2.5s infinite ease-out;
+}
+
+/* Animations */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes wave {
+    0%   { transform: scale(0.6); opacity: 0.6; }
+    100% { transform: scale(1.4); opacity: 0; }
+}
+
+@keyframes pulseRing {
+    0%, 100% { box-shadow: 0 0 25px #29e3c1, inset 0 0 50px #18534F; }
+    50%      { box-shadow: 0 0 40px #29e3c1, inset 0 0 80px #226D68; }
+}
+
+/* --- Texte néon --- */
+.loading-text {
+    margin-top: 25px;
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #ECF8F6;
+    text-shadow:
+        0 0 5px #29e3c1,
+        0 0 10px #1B8A7F,
+        0 0 20px #29e3c1;
+    animation: neonPulse 2s infinite alternate ease-in-out;
+    letter-spacing: 1px;
+}
+
+@keyframes neonPulse {
+    from { opacity: 0.6; }
+    to   { opacity: 1; }
+}
+
+/* --- Étincelles d'argent --- */
+.money-sparks {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.spark {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #29e3c1;
+    border-radius: 50%;
+    box-shadow: 0 0 12px #29e3c1;
+    opacity: 0.8;
+    animation: sparkFloat linear infinite;
+}
+
+@keyframes sparkFloat {
+    0%   { transform: translateY(0) scale(1); opacity: 0.7; }
+    100% { transform: translateY(-120vh) scale(0.3); opacity: 0; }
+}
+
+/* --- Messages d'erreur --- */
+.error-message {
+    color: #ff4444;
+    margin-bottom: 10px;
+    text-align: center;
+    font-weight: 600;
+}
+</style>
+{% endblock %}
 
 {% block right %}
+<!-- Section droite -->
+<div class="right-section">
+    <h2 class="fade-slide">Espace Administrateur</h2>
+    <p class="fade-slide delay1">Connectez-vous pour accéder au tableau de bord</p>
 
-        <!-- Section droite -->
-        <div class="right-section">
-            <h2 class="fade-slide">Espace Administrateur</h2>
-            <p class="fade-slide delay1">Connectez-vous pour accéder au tableau de bord</p>
-
-            <!-- Messages d'erreur -->
-            {% if messages %}
-                <div class="messages">
-                    {% for message in messages %}
-                        <p class="error-message {{ message.tags }}">{{ message }}</p>
-                    {% endfor %}
-                </div>
-            {% endif %}
-
-            <!-- Formulaire -->
-            <form action="{% url 'login_admin' %}" method="post" class="fade-slide delay2">
-                {% csrf_token %}
-                <div class="input-group">
-                    <label for="username">Nom d’utilisateur</label>
-                    <input type="text" id="username" name="username" placeholder="admin123" required>
-                </div>
-
-                <div class="input-group">
-                    <label for="password">Mot de passe</label>
-                    <input type="password" id="password" name="password" placeholder="********" required>
-                </div>
-
-                <button type="submit" class="btn">Se connecter</button>
-                <p class="forgot"><a href="#">Mot de passe oublié ?</a></p>
-
-                <a href="{% url 'acceuil' %}" class="back-arrow">Retour à l'accueil</a>
-            </form>
+    <!-- Messages d'erreur (pour non-AJAX fallback) -->
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <p class="error-message {{ message.tags }}">{{ message }}</p>
+            {% endfor %}
         </div>
-{% endblock %} 
+    {% endif %}
+
+    <!-- Div pour messages d'erreur dynamiques -->
+    <div id="error-messages" class="messages"></div>
+
+    <!-- Formulaire -->
+    <form id="login-form" action="{% url 'login_admin' %}" method="post" class="fade-slide delay2">
+        {% csrf_token %}
+        <div class="input-group">
+            <label for="username">Nom d’utilisateur</label>
+            <input type="text" id="username" name="username" placeholder="admin123" required>
+        </div>
+
+        <div class="input-group">
+            <label for="password">Mot de passe</label>
+            <input type="password" id="password" name="password" placeholder="********" required>
+        </div>
+
+        <button type="submit" class="btn">Se connecter</button>
+
+        <a href="{% url 'acceuil' %}" class="back-arrow">Retour à l'accueil</a>
+    </form>
+</div>
+
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loading-overlay">
+    <div class="spinner"></div>
+    <p class="loading-text">Connexion en cours...</p>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Handle form submission with AJAX
+    const form = document.getElementById('login-form');
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const errorMessages = document.getElementById('error-messages');
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();  // Prevent default submission
+
+        // Clear previous errors
+        errorMessages.innerHTML = '';
+
+        // Show loading immediately
+        loadingOverlay.style.display = 'flex';
+
+        // Prepare form data
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',  // Mark as AJAX
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')  // CSRF token
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Wait 5 seconds before redirect
+                setTimeout(() => {
+                    window.location.href = "{% url 'admin_dashboard' %}";
+                }, 2000);
+            } else {
+                // Hide loading and show error
+                loadingOverlay.style.display = 'none';
+                errorMessages.innerHTML = `<p class="error-message error">${data.message}</p>`;
+            }
+        } catch (error) {
+            // Handle network errors
+            loadingOverlay.style.display = 'none';
+            errorMessages.innerHTML = '<p class="error-message error">Une erreur est survenue. Veuillez réessayer.</p>';
+        }
+    });
+</script>
+{% endblock %}
