@@ -18,6 +18,10 @@ from .models import Client, CompteBancaire, Operation
 from django.http import JsonResponse, Http404
 from .forms import ClientForm
 
+
+import matplotlib
+matplotlib.use('Agg')   # backend non graphique
+
 import matplotlib.pyplot as plt
 import pandas as pd
 import io
