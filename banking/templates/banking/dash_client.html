@@ -8,386 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'banking/client.css' %}">
     
-    <style>
-        /* ===== Variables de Couleur & Reset ===== */
-        :root {
-            --color-primary: #18534F;
-            --color-primary-dark: #103a37;
-            --color-primary-light: #226D68;
-            --color-bg: #F8F9FA;
-            --color-bg-alt: #FFFFFF;
-            --color-text: #212529;
-            --color-text-light: #6C757D;
-            --color-text-inverted: #ECF8F6;
-            --color-border: #DEE2E6;
-            --color-green: #2E8B57;
-            --color-red: #D9534F;
-            --color-blue: #0275D8;
-            --color-yellow: #F0AD4E;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--color-bg);
-            color: var(--color-text);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        /* ===== Header Principal ===== */
-        .main-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 30px;
-            background-color: var(--color-primary);
-            color: var(--color-text-inverted);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            flex-shrink: 0;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo {
-            width: 45px;
-            height: 45px;
-            background-color: var(--color-text-inverted);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--color-primary);
-        }
-
-        .header-text h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin: 0;
-        }
-        .header-text h3 {
-            font-size: 0.9rem;
-            font-weight: 400;
-            opacity: 0.8;
-            margin: 0;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .client-balance {
-            background-color: var(--color-primary-light);
-            padding: 10px 15px;
-            border-radius: 8px;
-            text-align: right;
-        }
-        .client-balance span {
-            font-size: 0.8rem;
-            opacity: 0.8;
-            display: block;
-        }
-        .client-balance strong {
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
-
-        .btn-logout {
-            background: none;
-            border: none;
-            color: var(--color-text-inverted);
-            opacity: 0.8;
-            cursor: pointer;
-            padding: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-        .btn-logout:hover {
-            opacity: 1;
-            transform: scale(1.1);
-        }
-        .btn-logout svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        /* ===== Barre de Navigation Secondaire (Onglets) ===== */
-        .main-nav {
-            background-color: var(--color-bg-alt);
-            border-bottom: 1px solid var(--color-border);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            flex-shrink: 0;
-        }
-        .main-nav ul {
-            display: flex;
-            justify-content: center;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            gap: 10px;
-        }
-        .main-nav li a {
-            display: block;
-            padding: 16px 25px;
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--color-text-light);
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
-        }
-        .main-nav li a:hover {
-            color: var(--color-text);
-        }
-        .main-nav li a.active {
-            color: var(--color-primary);
-            font-weight: 600;
-            border-bottom-color: var(--color-primary);
-        }
-
-        /* ===== Contenu Principal ===== */
-        .page-content {
-            padding: 30px;
-            flex-grow: 1;
-            max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
-        }
-
-        .content-section {
-            display: none;
-        }
-        .content-section.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ===== Cartes (Card) & Styles existants (Conservés) ===== */
-        .card {
-            background-color: var(--color-bg-alt);
-            border-radius: 12px;
-            border: 1px solid var(--color-border);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            margin-bottom: 25px;
-            overflow: hidden;
-        }
-        .card-header {
-            padding: 20px 25px;
-            border-bottom: 1px solid var(--color-border);
-        }
-        .card-header h4 {
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
-        .card-body {
-            padding: 25px;
-        }
-
-        /* Styles spécifiques au tableau */
-        .table-responsive { overflow-x: auto; }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.95rem;
-        }
-        table th, table td {
-            border-bottom: 1px solid var(--color-border);
-            padding: 15px;
-            text-align: left;
-            vertical-align: middle;
-        }
-        table th {
-            background-color: var(--color-bg);
-            font-weight: 600;
-            color: var(--color-text-light);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-        }
-        table tbody tr:hover {
-            background-color: #eaf6f5;
-        }
-        .no-data {
-            text-align: center;
-            color: var(--color-text-light);
-            font-style: italic;
-            padding: 20px;
-        }
-
-        /* Styles de formulaire et messages (Conservés) */
-        .tab-nav { display: flex; background-color: var(--color-bg); border-bottom: 1px solid var(--color-border); }
-        .tab-link { flex: 1; padding: 18px 20px; font-size: 1rem; font-weight: 500; color: var(--color-text-light); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease; text-align: center; }
-        .tab-link:hover { color: var(--color-primary); }
-        .tab-link.active { color: var(--color-primary); font-weight: 600; background-color: var(--color-bg-alt); }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
-        .form-group label { font-weight: 500; font-size: 0.9rem; }
-        .form-group input[type="number"], .form-group select { width: 100%; padding: 12px 14px; border-radius: 8px; border: 1.5px solid var(--color-border); font-size: 1rem; transition: border-color 0.3s ease, box-shadow 0.3s ease; }
-        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(24, 83, 79, 0.15); }
-        .form-group select { appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.7rem center; background-repeat: no-repeat; background-size: 1.2em 1.2em; padding-right: 2.5rem; }
-        .btn { transition: all 0.3s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: none; padding: 12px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 1rem; width: 100%; }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .btn-primary { background-color: var(--color-primary); color: var(--color-text-inverted); }
-        .btn-primary:hover { background-color: var(--color-primary-dark); }
-        .messages-container { list-style: none; margin-bottom: 20px; }
-        .message { padding: 15px 20px; border-radius: 8px; font-weight: 500; margin-bottom: 10px; border: 1px solid transparent; }
-        .message.success { background-color: #d4edda; border-color: #c3e6cb; color: #155724; }
-        .message.error { background-color: #f8d7da; border-color: #f5c6cb; color: #721c24; }
-        .message.warning { background-color: #fff3cd; border-color: #ffeeba; color: #856404; }
-        .message.info { background-color: #d1ecf1; border-color: #bee5eb; color: #0c5460; }
-        .map{
-    overflow: hidden;
-} /*donner une bonne hauteur au carte*/
-
-.map__image{
-    width: 50%;
-    float: left;
-}
-
-.map__image path{
-    fill: rgb(159, 95, 36);
-    stroke: rgb(255, 255, 255);
-    stroke-width: 2px;
-    transition: fill 0.3s;
-}
-
-/*.map__image path:hover{
-    fill: rgb(73, 104, 24);
-}*/
-
-.map__image .is-active path{
-    fill: rgb(104, 24, 24);
-}
-
-.map__image .novabank-region path {
-    fill: #2E8B57; /* Green color for specified regions */
-}
-
-.map__list{
-    float: right;
-    width: 50%;
-    padding: 20px;
-    min-height: 500px; /* Adjust as needed */
-}
-
-.map__list #region-info {
-    text-align: left;
-}
-
-.map__list #region-info h4 {
-    margin-bottom: 10px;
-    color: var(--color-primary);
-}
-
-.map__list #region-info p {
-    margin-bottom: 5px;
-}
-
-.titre{
-    text-align: center;
-    
-}
-
-/* === MODIFICATION DE VOTRE CSS EXISTANT === */
-
-.services {
-    /* SUPPRIMER 'display: grid' et 'grid-template-columns' */
-    /* display: grid; */
-    /* grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); */
-    
-    /* AJOUTER/MODIFIER pour Flexbox */
-    display: flex;          /* Utiliser flex pour l'alignement horizontal */
-    gap: 20px;
-    margin-bottom: 30px;
-    width: fit-content;     /* S'adapte à la largeur totale des enfants */
-    flex-wrap: nowrap;      /* Empêche le retour à la ligne */
-}
-
-.service-card {
-    /* Vos styles existants sont bons */
-    background-color: var(--color-bg-alt);
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    padding: 20px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-
-    /* AJOUTER pour le carrousel */
-    width: 280px;           /* Donner une largeur fixe à chaque carte */
-    flex-shrink: 0;         /* Empêcher les cartes de se rétrécir */
-}
-
-.service-card:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.service-card h4 {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-    color: var(--color-primary);
-}
-
-.service-text {
-    display: none;
-    font-size: 0.9rem;
-    color: var(--color-text-light);
-}
-
-
-/* === NOUVEAU CSS À AJOUTER (pour le carrousel) === */
-
-.carousel-container {
-    max-width: 100%;
-    overflow: hidden; /* Masque le contenu qui déborde */
-    
-    /* Optionnel : ajoute un dégradé sur les côtés */
-    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-}
-
-/* Animation de défilement */
-@keyframes infiniteScroll {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); } /* Déplace de la moitié (la taille de la liste originale) */
-}
-
-/* Appliquer l'animation */
-.services[data-animated="true"] {
-    /* 30s pour défiler. Ajustez '30s' pour changer la vitesse */
-    animation: infiniteScroll 30s linear infinite; 
-}
-
-/* Mettre en pause l'animation au survol */
-.services[data-animated="true"]:hover {
-    animation-play-state: paused;
-}
-    </style>
 </head>
 <body>
 
@@ -431,6 +53,7 @@
         {% endif %}
 
         <section id="accueil" class="content-section active">
+            
             <div class="card">
                 <div class="card-body">
                     <h3 style="color: var(--color-primary-light);" class="titre">Nos Services</h3>
@@ -570,6 +193,22 @@
 
                 </div>
             </div>
+            <div class="intro-media">
+                <video id="introVideo" autoplay muted loop playsinline poster="{% static 'media/poster-novabank.jpg' %}">
+                    <source src="{% static 'media/pub.mp4' %}" type="video/mp4">
+                    Votre navigateur ne supporte pas la vidéo.
+                </video>
+            
+                <!-- Overlay néon subtil pour un look pro -->
+                <div class="neon-overlay"></div>
+            
+                <!-- Glow néon pour effet premium -->
+                <div class="neon-glow"></div>
+            
+                <button id="unmuteBtn" class="btn-sound neon-btn">
+                    <span class="sound-icon">🔊</span> 
+                </button>
+            </div>
         </section>
 
         <section id="historique" class="content-section">
@@ -657,6 +296,36 @@
         </section>
 
     </main>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-logo">NovaBank</div>
+            <nav class="footer-links">
+                <a href="#">Mentions légales</a>
+                <a href="#">Politique de confidentialité</a>
+                <a href="#">Contactez-nous</a>
+            </nav>
+            <div class="footer-social">
+                <a href="#" title="Facebook">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
+                    </svg>
+                </a>
+                </a>
+                <a href="#" title="LinkedIn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0H8.14v16h4.84v-8.61c0-4.739 2.338-3.927 3.719-3.927 1.381 0 2.818.792 2.818 4.226v8.311h4.841v-9.931c0-6.005-3.763-6.005-6.005 0v.043h-.006zm-3.02 14.5h.01V.5h-.01v21.5z"/>
+                    </svg>
+                </a>
+                <a href="#" title="Instagram">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                    </svg>
+                </a>
+            </div>
+            <p class="footer-copyright">© {{ "now"|date:"Y" }} NovaBank. Tous droits réservés. | Conçu avec passion pour une banque moderne et sécurisée.</p>
+        </div>
+    </footer>
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -799,6 +468,60 @@ map.addEventListener('mouseleave', function(){
             }
         }
     </script>
-
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sectionAccueil = document.getElementById('accueil');
+        const video = document.getElementById('introVideo');
+        const btnUnmute = document.getElementById('unmuteBtn');
+        let audioPlayed = false;
+    
+        function lancerVideo() {
+            video.play().catch(err => console.log("Vidéo autoplay bloquée", err));
+        }
+    
+        function jouerSonUneFois() {
+            if (audioPlayed) return;
+            audioPlayed = true;
+    
+            fetch("{% static 'media/pub.mp3' %}")
+                .then(response => response.blob())
+                .then(blob => {
+                    const audioUrl = URL.createObjectURL(blob);
+                    const audio = new Audio(audioUrl);
+                    audio.volume = 0.7;  // Volume pro et confortable
+                    audio.play().then(() => {
+                        console.log("Musique jouée");
+                        // Animation fluide pour cacher le bouton
+                        btnUnmute.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                        btnUnmute.style.opacity = '0';
+                        btnUnmute.style.transform = 'translate(-50%, 10px)';
+                        setTimeout(() => {
+                            btnUnmute.style.display = 'none';
+                        }, 500);
+                    }).catch(err => console.warn("Audio échoué", err));
+                });
+        }
+    
+        btnUnmute.addEventListener('click', function() {
+            video.muted = false;
+            jouerSonUneFois();
+        });
+    
+        const observer = new MutationObserver(function() {
+            if (sectionAccueil.classList.contains('active')) {
+                lancerVideo();
+            } else {
+                video.pause();
+            }
+        });
+    
+        observer.observe(sectionAccueil, { attributes: true });
+    
+        if (sectionAccueil.classList.contains('active')) {
+            lancerVideo();
+        }
+    });
+    </script>
+        
 </body>
 </html>

@@ -832,8 +832,6 @@
                     </div>
                     <div class="card-body">
                         <div class="search-container form-group">
-                            <input type="search" id="historyAccount" placeholder="Filtrer par numéro de compte (non fonctionnel sans JS d'API)">
-                            <button id="loadHistory" class="btn btn-primary">Afficher</button>
                         </div>
                         <div class="table-responsive">
                             <table>
@@ -955,10 +953,6 @@
                     document.querySelectorAll('input[name="op_ids"]').forEach(cb => cb.checked = this.checked);
                 });
             }
-
-            // Note: La fonctionnalité de "loadHistory" nécessiterait une API (Fetch/AJAX)
-            // pour être réellement fonctionnelle sans recharger la page.
-            // Pour l'instant, elle ne fait qu'afficher le tableau pré-chargé par Django.
 
         });
     </script>
